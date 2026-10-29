@@ -10,13 +10,13 @@ import { useSetupData } from './useSetupData'
 import { useUndo } from './Undo'
 import './setup.css'
 
-type Tab = 'next' | 'room' | 'priority'
-const TABS: [Tab, string][] = [['next', 'Next'], ['room', 'By room'], ['priority', 'By priority']]
+type Tab = 'next' | 'room' | 'priority' | 'shopping'
+const TABS: [Tab, string][] = [['next', 'Next'], ['room', 'Rooms'], ['priority', 'Priority'], ['shopping', 'Shopping']]
 
 function savedTab(): Tab {
   try {
     const t = localStorage.getItem('setup-tab')
-    return t === 'room' || t === 'priority' ? t : 'next'
+    return t === 'room' || t === 'priority' || t === 'shopping' ? t : 'next'
   } catch {
     return 'next'
   }
@@ -128,12 +128,12 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
     if (title && title !== section.title) run(() => api.saveSection({ ...section, title }))
   }
 
-  function addSection() {
+  function addSection(kind: Section['kind']) {
     const title = window.prompt('New section name')?.trim()
     if (!title) return
     const key = makeKey(title, new Set(data.sections.map((s) => s.key)))
     const position = Math.max(-1, ...data.sections.map((s) => s.position)) + 1
-    run(() => api.saveSection({ id: crypto.randomUUID(), key, title, kind: 'room', position }))
+    run(() => api.saveSection({ id: crypto.randomUUID(), key, title, kind, position }))
   }
 
   const viewProps = {
@@ -159,7 +159,23 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
       {(error || data.error) && <p className="error">{error ?? data.error}</p>}
       {tab === 'next' && <NextView {...viewProps} />}
       {tab === 'room' && (
-        <RoomView {...viewProps} onAdd={add} onRenameSection={renameSection} onAddSection={addSection} />
+        <RoomView
+          {...viewProps}
+          sections={data.sections.filter((s) => s.kind !== 'shopping')}
+          onAdd={add}
+          onRenameSection={renameSection}
+          onAddSection={() => addSection('room')}
+          sketches
+        />
+      )}
+      {tab === 'shopping' && (
+        <RoomView
+          {...viewProps}
+          sections={data.sections.filter((s) => s.kind === 'shopping')}
+          onAdd={add}
+          onRenameSection={renameSection}
+          onAddSection={() => addSection('shopping')}
+        />
       )}
       {tab === 'priority' && <PriorityView {...viewProps} />}
       {editing && (

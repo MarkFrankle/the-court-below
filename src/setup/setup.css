@@ -45,7 +45,7 @@
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.25rem;
   margin: 0.75rem 0 0.5rem;
   padding: 0.25rem;
@@ -89,12 +89,6 @@
   white-space: nowrap;
 }
 
-.divider {
-  margin: 1.5rem 0 0.5rem;
-  color: var(--muted);
-  font: italic 1.1rem var(--font-display);
-}
-
 .tasks {
   list-style: none;
   margin: 0;
@@ -111,6 +105,11 @@
 
 .task.waiting {
   opacity: 0.5;
+}
+
+/* Done rows recede like waiting ones, but keep a strike-through and a quiet tick so they read differently */
+.task.done {
+  opacity: 0.55;
 }
 
 .task.done .task-text {
@@ -156,7 +155,8 @@
 }
 
 .check[aria-checked='true'] {
-  background: var(--gold);
+  border-color: var(--muted);
+  color: var(--gold);
 }
 
 .task-body {

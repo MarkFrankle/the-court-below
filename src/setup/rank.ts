@@ -49,30 +49,25 @@ function push<K, V>(map: Map<K, V[]>, key: K, value: V) {
   else map.set(key, [value])
 }
 
+// Next is only what you can do right now: open, unblocked, in its slot or late, and not shopping.
+// Ranking still sees every task, so a shopping item can block a to-do.
 export function rankNext(tasks: Task[], sections: Section[], blockers: Blocker[], viewer: Viewer, now: Date): TaskView[] {
-  const views = [...viewTasks(tasks, blockers, viewer, now).values()].filter(
-    (v) => v.state !== 'done' && isForViewer(v.task, viewer),
-  )
+  const shopping = shoppingSections(sections)
   const place = placement(sections)
-  const ready = views.filter((v) => v.state === 'doable' || v.state === 'late')
-  const notYet = views.filter((v) => v.state === 'not_yet')
-  const blocked = views.filter((v) => v.state === 'blocked')
+  const ready = [...viewTasks(tasks, blockers, viewer, now).values()].filter(
+    (v) => (v.state === 'doable' || v.state === 'late') && isForViewer(v.task, viewer) && !shopping.has(v.task.sectionId),
+  )
 
-  ready.sort((a, b) =>
+  return ready.sort((a, b) =>
     priorityRank(a.task.priority) - priorityRank(b.task.priority)
     || Number(isMineOrUnblocking(b, viewer)) - Number(isMineOrUnblocking(a, viewer))
     || Number(b.state === 'late') - Number(a.state === 'late')
     || slotEnd(a.task) - slotEnd(b.task)
     || place(a.task) - place(b.task))
-  notYet.sort((a, b) =>
-    SLOTS[a.task.slot!].start.getTime() - SLOTS[b.task.slot!].start.getTime()
-    || priorityRank(a.task.priority) - priorityRank(b.task.priority)
-    || place(a.task) - place(b.task))
-  blocked.sort((a, b) =>
-    priorityRank(a.task.priority) - priorityRank(b.task.priority)
-    || place(a.task) - place(b.task))
+}
 
-  return [...ready, ...notYet, ...blocked]
+function shoppingSections(sections: Section[]): Set<string> {
+  return new Set(sections.filter((s) => s.kind === 'shopping').map((s) => s.id))
 }
 
 function isForViewer(task: Task, viewer: Viewer): boolean {
@@ -115,7 +110,8 @@ export function groupByRoom(tasks: Task[], sections: Section[], blockers: Blocke
 export function groupByPriority(tasks: Task[], sections: Section[], blockers: Blocker[], viewer: Viewer, now: Date) {
   const views = viewTasks(tasks, blockers, viewer, now)
   const place = placement(sections)
-  const sorted = [...tasks].sort((a, b) => place(a) - place(b))
+  const shopping = shoppingSections(sections)
+  const sorted = tasks.filter((t) => !shopping.has(t.sectionId)).sort((a, b) => place(a) - place(b))
   return PRIORITY_ORDER.map((priority) => ({
     priority,
     items: sorted.filter((t) => t.priority === priority).map((t) => views.get(t.id)!),

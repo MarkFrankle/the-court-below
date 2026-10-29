@@ -308,7 +308,8 @@ A fourth route turns the [setup plan](setup-plan.md) into a live, shared task li
 The full design, including the ranking rules and the reasons behind them, is in [the setup page design](superpowers/specs/2026-10-29-setup-page-design.md).
 It shares the Supabase project with the game, and the `hosts` table, but nothing else.
 
-- **Views.** Next (the default: the best task for you right now, then what's coming up), By room (everything, open and done), and By priority (Must, Should, Nice to have).
+- **Views.** Next (the default: only to-dos you can do right now, best first; nothing blocked, not yet due or on the shopping list), Rooms (every room and Saturday before doors, open and done), Priority (Must, Should, Nice to have, without shopping), and Shopping (the shopping sections, by shop).
+  A shopping item can still block a to-do, so buying something can unlock work in Next.
 - **Tasks.** Each has a room, an assignee (Sarah, Mark, "Sarah or Mark", or anyone), a priority, an optional rough time slot, and optional blockers. A task is doable when none of its blockers are open and its slot is now; a slot that has passed marks it late.
 - **People.** Sarah and Mark sign in with their host email and password and can edit everything. Helpers ("Pain & Panic") enter their name and the setup code `pain-and-panic` and can only tick and untick; the database enforces this through `set_task_done()`.
 - **Live.** Realtime pushes every change to every phone; phones also refetch on unlock, on reconnect and every 30 seconds.

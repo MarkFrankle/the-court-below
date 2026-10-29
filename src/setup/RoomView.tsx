@@ -22,6 +22,7 @@ export function RoomView(props: {
   onAdd: (section: Section) => void
   onRenameSection: (section: Section) => void
   onAddSection: () => void
+  sketches?: boolean
 }) {
   const groups = groupByRoom(props.tasks, props.sections, props.blockers, props.viewer, props.now)
   return (
@@ -58,11 +59,13 @@ export function RoomView(props: {
       {props.canEdit && (
         <p><button className="button ghost add" onClick={props.onAddSection}>+ Add section</button></p>
       )}
-      <div className="sketches">
-        {SKETCHES.map(([file, alt]) => (
-          <img key={file} src={`/sketches/${file}`} alt={alt} loading="lazy" />
-        ))}
-      </div>
+      {props.sketches && (
+        <div className="sketches">
+          {SKETCHES.map(([file, alt]) => (
+            <img key={file} src={`/sketches/${file}`} alt={alt} loading="lazy" />
+          ))}
+        </div>
+      )}
     </>
   )
 }

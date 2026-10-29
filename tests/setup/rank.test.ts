@@ -7,6 +7,7 @@ const sections: Section[] = [
   { id: 's2', key: 'guest-room', title: 'Guest room', kind: 'room', position: 1 },
   { id: 's3', key: 'empty', title: 'Empty', kind: 'room', position: 2 },
 ]
+const withShop: Section[] = [...sections, { id: 's4', key: 'shop-food', title: 'Shop: food', kind: 'shopping', position: 3 }]
 
 let n = 0
 function task(over: Partial<Task> = {}): Task {
@@ -156,12 +157,20 @@ describe('rankNext', () => {
     expect(ids(rankNext([doable, late], sections, [], 'sarah', friLate))).toEqual([late.id, doable.id])
   })
 
-  test('waiting tasks come after doable ones, not_yet before blocked', () => {
+  test('Next leaves out tasks that are blocked or not yet due', () => {
     const blocker = task({ priority: 'nice' })
     const blocked = task({ priority: 'must' })
     const notYet = task({ priority: 'must', slot: 'fri_evening' })
     const ranked = ids(rankNext([blocked, notYet, blocker], sections, [{ itemId: blocked.id, blockedById: blocker.id }], 'sarah', friNoon))
-    expect(ranked).toEqual([blocker.id, notYet.id, blocked.id])
+    expect(ranked).toEqual([blocker.id])
+  })
+
+  test('Next leaves out shopping, but a shopping blocker still blocks', () => {
+    const buy = task({ sectionId: 's4' })
+    const carve = task()
+    const free = task()
+    const ranked = ids(rankNext([buy, carve, free], withShop, [{ itemId: carve.id, blockedById: buy.id }], 'sarah', friNoon))
+    expect(ranked).toEqual([free.id])
   })
 })
 
@@ -183,5 +192,12 @@ describe('groups', () => {
     expect(groups.map((g) => g.priority)).toEqual(['must', 'should', 'nice'])
     expect(groups[0].items.map((v) => v.task.id)).toEqual([b.id])
     expect(groups[2].items.map((v) => v.task.id)).toEqual([a.id])
+  })
+
+  test('groupByPriority leaves out shopping', () => {
+    const a = task({ priority: 'must' })
+    const b = task({ priority: 'must', sectionId: 's4' })
+    const groups = groupByPriority([a, b], withShop, [], 'sarah', friNoon)
+    expect(groups[0].items.map((v) => v.task.id)).toEqual([a.id])
   })
 })

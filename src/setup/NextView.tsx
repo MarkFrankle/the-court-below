@@ -13,10 +13,8 @@ export function NextView(props: {
   onToggle: (task: Task, done: boolean) => void
   onEdit: (task: Task) => void
 }) {
-  const ranked = rankNext(props.tasks, props.sections, props.blockers, props.viewer, props.now)
-  const ready = ranked.filter((v) => v.state === 'doable' || v.state === 'late')
-  const waiting = ranked.filter((v) => v.state === 'blocked' || v.state === 'not_yet')
-  const row = (view: (typeof ranked)[number], first = false) => (
+  const ready = rankNext(props.tasks, props.sections, props.blockers, props.viewer, props.now)
+  const row = (view: (typeof ready)[number], first = false) => (
     <TaskRow
       key={view.task.id}
       view={view}
@@ -28,19 +26,6 @@ export function NextView(props: {
     />
   )
 
-  return (
-    <>
-      {ready.length === 0 ? (
-        <p className="empty">Nothing for you right now.</p>
-      ) : (
-        <ul className="tasks">{ready.map((v, i) => row(v, i === 0))}</ul>
-      )}
-      {waiting.length > 0 && (
-        <>
-          <p className="divider">Coming up</p>
-          <ul className="tasks">{waiting.map((v) => row(v))}</ul>
-        </>
-      )}
-    </>
-  )
+  if (ready.length === 0) return <p className="empty">Nothing for you right now.</p>
+  return <ul className="tasks">{ready.map((v, i) => row(v, i === 0))}</ul>
 }

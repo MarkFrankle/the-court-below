@@ -17,8 +17,9 @@ The task list itself gets refined in a later session.
 ## Goals
 
 - **Next for me**: a list for the signed-in person, with the best task first.
-- **By room**: every task, open and done, grouped by room. The full picture.
-- **By priority**: the same tasks grouped by Must, Should and Nice to have.
+- **Rooms**: every to-do, open and done, grouped by room. The full picture.
+- **Priority**: the same to-dos grouped by Must, Should and Nice to have.
+- **Shopping**: the shopping list, by shop, kept apart from the to-dos.
 - Tasks have an assignee, a priority, a time slot and blockers.
 - Live: a tick on one phone shows on every phone straight away.
 - Works for Friday morning (see [Friday scope](#friday-scope)).
@@ -57,7 +58,7 @@ The task list itself gets refined in a later session.
 | --- | --- | --- |
 | Text | up to 200 characters | |
 | Note | optional free text | |
-| Room | one section | Sections are rooms, plus shopping by store, plus "Saturday before doors". A store counts as a "room" in By room |
+| Room | one section | Sections are rooms, plus shopping by store, plus "Saturday before doors". Stores show in the Shopping tab, not Rooms |
 | Assignee | `sarah`, `mark`, `hosts` or none | `hosts` means Sarah or Mark (jobs not to hand to friends, like taking out the rubbish); none means anyone, helpers included |
 | Priority | `must`, `should`, `nice` | Default `should` |
 | Slot | one of the fixed slots below, or Anytime | Default Anytime |
@@ -104,14 +105,13 @@ Helpers see only unassigned tasks, which keeps their list short.
 
 **Order.**
 
-1. Doable and late tasks first, then blocked and not-yet tasks below, greyed out with their reason, so people can see what's coming.
-2. Within the doable and late group, sort by:
+1. Only doable and late to-dos show. Blocked and not-yet tasks and shopping items stay out of Next (Sarah's call, 2026-10-29); Rooms shows them.
+2. Sort by:
    1. priority (Must, then Should, then Nice to have),
    2. then **only-mine or unblocks-others** first: a task assigned to this person, or a task that blocks at least one open task someone else could do (assigned to someone else or unassigned),
    3. then late before on-time,
    4. then the slot ending soonest,
    5. then room order and position.
-3. Within the waiting group, not-yet tasks go before blocked ones, then by slot start, then priority.
 
 Ranking priority before only-mine/unblocks is my call: a Nice-to-have that only Sarah can do shouldn't beat a Must anyone can do.
 It's easy to swap in the ranking function if it feels wrong on Friday.
@@ -121,17 +121,22 @@ Ticking a task there gives the 5-second undo, then it leaves the list, and anyth
 
 The ranking is a pure function (tasks, blockers, person, now in, ordered list out) in `src/setup/`, with Vitest tests for each rule.
 
-## By room
+## Rooms
 
-Every task, open and done, grouped by section in section order.
+Every to-do, open and done, grouped by section in section order; shopping sections live in their own tab.
 Open tasks show their state label (late, waiting on, slot), assignee and priority.
 Done tasks stay in place, struck through, with "done by".
 The layout sketches show as read-only images at the bottom, as in the current spec.
 
-## By priority
+## Priority
 
-The same tasks grouped Must, Should, Nice to have, each group in room order.
-Same labels as By room.
+The same to-dos grouped Must, Should, Nice to have, each group in room order, without shopping.
+Same labels as Rooms.
+
+## Shopping
+
+The shopping sections, laid out like Rooms (open and done, by shop), without the sketches.
+Shopping never shows in Next, but a shopping item can still block a to-do.
 
 ## Editing (Sarah and Mark only)
 
@@ -143,7 +148,7 @@ Same labels as By room.
 
 ## Navigation
 
-Three tabs: **Next** (the default), **By room**, **By priority**.
+Four tabs: **Next** (the default), **Rooms**, **Priority**, **Shopping**.
 The person's name and a sign-out link sit in the header.
 Mobile-first, using the existing theme tokens in `src/styles/theme.css`.
 
