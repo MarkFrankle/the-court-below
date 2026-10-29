@@ -11,7 +11,7 @@ Friday covers shopping, furniture, the photo wall build and the tech rehearsal. 
 3. **Guest room photo wall**: the tree and the wisteria arch take the longest.
 4. **Kitchen**: tidy, tablecloths and the candelabra.
 5. **Frozen yogurt and pomegranate bites**, made Friday so they freeze overnight.
-6. **Tech rehearsal** in the evening, following the checklist in the [technical spec](tech-spec.md#testing-and-failure-modes).
+6. **Tech rehearsal** in the evening, while friends are over helping decorate (pizza provided), following the checklist in the [technical spec](tech-spec.md#testing-and-failure-modes).
 
 The shopping list is grouped by store, so whoever heads out can take a whole section.
 
@@ -116,7 +116,7 @@ Nourishments
 
 Sweets
 
-- [ ] Crostatine (little tarts with fruit jelly filling)
+- [ ] Crostinis
 - [ ] Dark chocolate
 - [ ] Frozen yogurt for the pomegranate bites (Friday)
 

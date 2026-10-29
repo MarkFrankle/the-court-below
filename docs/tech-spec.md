@@ -448,7 +448,7 @@ A rehearsal mode on the host remote makes a full run possible with only two or t
 
 ## Open questions
 
-- [ ] Which email should be the host account?
-- [ ] Site name for the QR code, for example `court-below`.
-- [ ] What time works for the Friday rehearsal?
+- [ ] Which email should be the host account? It's the Supabase login that `/tv` and `/host` sign in with; any address Sarah can receive mail at works.
 - [ ] Setup code to share with Mark and the helpers.
+
+The Netlify site name gets picked at first deploy, before the QR cards are printed. The Friday rehearsal has no fixed time: it happens in the evening while friends help decorate.
