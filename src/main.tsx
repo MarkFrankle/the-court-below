@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/theme.css'
+import { SetupPage } from './setup/SetupPage'
 
 // Routes by pathname, no router library: / guest, /tv display, /host remote, /setup checklist.
 const lines: Record<string, string> = {
@@ -12,6 +13,7 @@ const lines: Record<string, string> = {
 
 function App() {
   const path = window.location.pathname.replace(/\/+$/, '') || '/'
+  if (path === '/setup') return <SetupPage />
   return (
     <main className="placeholder">
       <h1>The Court Below</h1>

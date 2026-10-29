@@ -80,3 +80,11 @@ export interface Editor {
   userId: string
   name: string
 }
+
+// A task's fixed id, used by SQL scripts that edit the live list.
+export function makeKey(text: string, taken: Set<string>): string {
+  const suffix = () => Math.random().toString(36).slice(2, 6).padEnd(4, '0')
+  const slug = text.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 34).replace(/-$/, '')
+  if (!slug) return `task-${suffix()}`
+  return taken.has(slug) ? `${slug}-${suffix()}` : slug
+}
