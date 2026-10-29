@@ -11,7 +11,7 @@ create table setup_items (id uuid primary key default gen_random_uuid(), key tex
   text text not null check (char_length(text) <= 200), note text,
   assignee text check (assignee in ('sarah', 'mark', 'hosts')),
   priority text not null default 'should' check (priority in ('must', 'should', 'nice')),
-  slot text check (slot in ('fri_shops', 'fri_evening', 'sat_shops', 'sat_afternoon', 'before_doors')),
+  slot text check (slot in ('fri_shops', 'fri_before_friends', 'fri_evening', 'sat_shops', 'sat_afternoon', 'before_doors')),
   position int not null,
   done_by uuid references setup_editors (user_id) on delete set null, done_at timestamptz,
   updated_at timestamptz not null default now());

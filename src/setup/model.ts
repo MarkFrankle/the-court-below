@@ -3,7 +3,7 @@ export type Viewer = Person | 'helper'
 // 'hosts' means Sarah or Mark, never helpers; null means anyone.
 export type Assignee = Person | 'hosts' | null
 export type Priority = 'must' | 'should' | 'nice'
-export type SlotId = 'fri_shops' | 'fri_evening' | 'sat_shops' | 'sat_afternoon' | 'before_doors'
+export type SlotId = 'fri_shops' | 'fri_before_friends' | 'fri_evening' | 'sat_shops' | 'sat_afternoon' | 'before_doors'
 
 export interface Slot {
   id: SlotId
@@ -16,6 +16,7 @@ export interface Slot {
 // A task with no slot is Anytime.
 export const SLOTS: Record<SlotId, Slot> = {
   fri_shops: slot('fri_shops', 'Friday, shops open', '2026-10-30T09:00:00+01:00', '2026-10-30T20:00:00+01:00'),
+  fri_before_friends: slot('fri_before_friends', 'Friday, before friends arrive', '2026-10-30T09:00:00+01:00', '2026-10-30T17:00:00+01:00'),
   fri_evening: slot('fri_evening', 'Friday evening', '2026-10-30T17:00:00+01:00', '2026-10-31T00:00:00+01:00'),
   sat_shops: slot('sat_shops', 'Saturday, shops open', '2026-10-31T09:00:00+01:00', '2026-10-31T18:00:00+01:00'),
   sat_afternoon: slot('sat_afternoon', 'Saturday afternoon', '2026-10-31T12:00:00+01:00', '2026-10-31T19:00:00+01:00'),

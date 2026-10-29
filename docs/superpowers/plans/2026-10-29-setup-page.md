@@ -27,6 +27,7 @@ The client loads everything once, keeps it in one hook updated by Realtime, and 
   | id | label | start | end |
   | --- | --- | --- | --- |
   | `fri_shops` | Friday, shops open | `2026-10-30T09:00:00+01:00` | `2026-10-30T20:00:00+01:00` |
+  | `fri_before_friends` | Friday, before friends arrive | `2026-10-30T09:00:00+01:00` | `2026-10-30T17:00:00+01:00` |
   | `fri_evening` | Friday evening | `2026-10-30T17:00:00+01:00` | `2026-10-31T00:00:00+01:00` |
   | `sat_shops` | Saturday, shops open | `2026-10-31T09:00:00+01:00` | `2026-10-31T18:00:00+01:00` |
   | `sat_afternoon` | Saturday afternoon | `2026-10-31T12:00:00+01:00` | `2026-10-31T19:00:00+01:00` |
