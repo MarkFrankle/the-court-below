@@ -40,6 +40,8 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 
 ## Decided
 
+- Setup code: `pain-and-panic` (helpers are "Pain & Panic"). SQL order: `hosts.sql`, `setup.sql`, `seed_setup.sql`, then the game's `schema.sql`.
+- After seeding, the live setup list is the source of truth; Claude edits it by writing SQL scripts that target tasks by `key`, which Sarah pastes.
 - Late guests after 23:00 get a quick form (name and portrait only); they vote from the next round and aren't guessed, writers or judged. Spec: `shades.late`.
 - Obol totals stay hidden until the finale.
 - The Netlify site is `thecourtbelow`.
@@ -49,7 +51,7 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 
 ## Open
 
-- Before `/setup` works: pick the setup code (several words, not a PIN), add the env vars in Netlify (done locally), create Mark's host user.
+- Before `/setup` works: add the env vars in Netlify (done locally), create Mark's host user.
 - Mark's GitHub and Supabase access, if he takes over.
 - The unreadable "M:" under Drinks in `docs/sketches/menu-and-todo.jpg`: ask Mark.
 

@@ -103,13 +103,10 @@ The anon key ships in the bundle, so RLS is the security boundary. Input that mu
 | `votes` | One choice per voter per item | Own + host | Own, only while that item's vote is open |
 | `obols` | Points ledger | Everyone | Host |
 
-**`supabase/schema.sql`** (run once in the SQL editor)
+**`supabase/schema.sql`** (run once in the SQL editor, after `hosts.sql`)
 
 ```sql
--- Host role
-create table hosts (user_id uuid primary key references auth.users on delete cascade);
-create function is_host() returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from hosts where user_id = auth.uid()) $$;
+-- Host role: hosts and is_host() live in supabase/hosts.sql, which runs first.
 
 -- Game state
 create table game (
@@ -185,7 +182,6 @@ create table obols (id bigserial primary key, shade_id uuid not null references 
   round smallint not null, item int not null, reason text not null, unique (shade_id, round, item, reason));
 
 -- RLS
-alter table hosts enable row level security;
 alter table game enable row level security;
 alter table shades enable row level security;
 alter table confessions enable row level security;
@@ -198,7 +194,6 @@ alter table r3_items enable row level security;
 alter table votes enable row level security;
 alter table obols enable row level security;
 
-create policy host_read on hosts for select using (user_id = auth.uid());
 create policy read_all on game for select to authenticated using (true);
 
 create policy read_all on shades for select to authenticated using (true);
@@ -309,52 +304,17 @@ All round building and scoring lives in pure functions in `src/lib/`, unit-teste
 
 ## Setup page (`/setup`)
 
-A fourth route turns the [setup plan](setup-plan.md) into a live checklist. Sarah, Mark and the helpers open it on any phone from one link, then edit and tick items, with no accounts. It shares the Supabase project with the game but nothing else.
+A fourth route turns the [setup plan](setup-plan.md) into a live, shared task list for Friday and Saturday.
+The full design, including the ranking rules and the reasons behind them, is in [the setup page design](superpowers/specs/2026-10-29-setup-page-design.md).
+It shares the Supabase project with the game, and the `hosts` table, but nothing else.
 
-- **Access.** The first visit asks for a name and a setup code. `join_setup()` checks the code and adds that anonymous user to `setup_editors`. Without the code, the page shows nothing. The host joins with the code too, because `done_by` must point at a row in `setup_editors`.
-- **Code strength.** `join_setup()` can be called repeatedly, so use a code of three or more words (for example `pomegranate-six-seeds`), not a short PIN.
-- **Content.** Sections (rooms, shopping by store, Saturday), each holding items with text, an optional owner (free text, such as "Mark") and an optional note. The layout sketches show as read-only images at the bottom.
-- **Editing.** Tick and untick, edit text inline, add items and sections, move items up or down, and delete with a 5-second undo.
-- **Live.** Ticks appear on everyone's phone straight away. A ticked item shows who did it, for example "done by Mark".
-- **Filters.** All, Not done, and Mine (matched on owner), which makes the shopping list usable in a shop.
-- **Seed.** `supabase/seed_setup.sql` is generated from the setup plan once it's final, so the page starts from that version.
-
-```sql
--- Setup checklist
-create table setup_secret (id int primary key default 1 check (id = 1), code text not null);  -- RLS on, no policies: unreadable from the app
-create table setup_editors (user_id uuid primary key default auth.uid() references auth.users on delete cascade,
-  name text not null check (char_length(name) between 1 and 30));
-create table setup_sections (id uuid primary key default gen_random_uuid(), title text not null,
-  kind text not null check (kind in ('room', 'shopping', 'day')), position int not null);
-create table setup_items (id uuid primary key default gen_random_uuid(),
-  section_id uuid not null references setup_sections on delete cascade,
-  text text not null check (char_length(text) <= 200), owner text, note text, position int not null,
-  done_by uuid references setup_editors (user_id), done_at timestamptz,
-  updated_at timestamptz not null default now());
-
-create function is_setup_editor() returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from setup_editors where user_id = auth.uid()) or is_host() $$;
-
-create function join_setup(p_code text, p_name text) returns boolean
-language plpgsql security definer set search_path = public as $$
-begin
-  if not exists (select 1 from setup_secret where code = p_code) then return false; end if;
-  insert into setup_editors (user_id, name) values (auth.uid(), p_name)
-    on conflict (user_id) do update set name = excluded.name;
-  return true;
-end $$;
-
-alter table setup_secret enable row level security;
-alter table setup_editors enable row level security;
-alter table setup_sections enable row level security;
-alter table setup_items enable row level security;
-create policy editors_read on setup_editors for select to authenticated using (is_setup_editor());
-create policy editors_all on setup_sections for all to authenticated using (is_setup_editor()) with check (is_setup_editor());
-create policy editors_all on setup_items for all to authenticated using (is_setup_editor()) with check (is_setup_editor());
-alter publication supabase_realtime add table setup_sections, setup_items;
-
-insert into setup_secret (code) values ('<choose a code>');
-```
+- **Views.** Next (the default: the best task for you right now, then what's coming up), By room (everything, open and done), and By priority (Must, Should, Nice to have).
+- **Tasks.** Each has a room, an assignee (Sarah, Mark, "Sarah or Mark", or anyone), a priority, an optional rough time slot, and optional blockers. A task is doable when none of its blockers are open and its slot is now; a slot that has passed marks it late.
+- **People.** Sarah and Mark sign in with their host email and password and can edit everything. Helpers ("Pain & Panic") enter their name and the setup code `pain-and-panic` and can only tick and untick; the database enforces this through `set_task_done()`.
+- **Live.** Realtime pushes every change to every phone; phones also refetch on unlock, on reconnect and every 30 seconds.
+- **SQL.** `supabase/hosts.sql`, then `supabase/setup.sql`, then `supabase/seed_setup.sql`, pasted into the SQL editor in that order. The seed refuses to run twice.
+- **Editing the list later.** The Supabase MCP is read-only, so Claude reads the live list and writes small SQL scripts that target tasks by their fixed `key`. Sarah pastes them.
+- **Checks.** `supabase/setup_rls_checks.md` lists the RLS checks to run against the live project.
 
 The setup page ships first, ahead of the game, so Friday's setup can run from it.
 
@@ -367,9 +327,12 @@ the-court-below/
   netlify.toml              build: npm run build, publish: dist, /* -> /index.html 200
   .env.example              VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
   supabase/
-    schema.sql              tables, RLS, functions, realtime, storage policies
+    hosts.sql               hosts table and is_host(), run first
+    setup.sql               setup checklist tables, RLS, functions
+    seed_setup.sql          setup checklist content (refuses to run twice)
+    setup_rls_checks.md     setup RLS checks against the live project
+    schema.sql              game tables, RLS, functions, realtime, storage policies
     reset.sql               reset_game()
-    seed_setup.sql          setup checklist content
   src/
     main.tsx                route by pathname: /, /tv, /host, /setup
     lib/
@@ -384,9 +347,9 @@ the-court-below/
     guest/                  form and controller screens
     tv/                     gallery, round displays, engine.ts
     host/                   sign-in, remote, moderation, export
-    setup/                  checklist page
+    setup/                  checklist page: model, ranking, data hook, views
     styles/                 dark theme tokens, display serif + clean sans
-  tests/                    rounds and scoring unit tests (Vitest)
+  tests/                    setup ranking, rounds and scoring unit tests (Vitest)
 ```
 
 ## Setup and deploy
@@ -398,7 +361,7 @@ About 15 minutes in two dashboards, then every push to `main` redeploys.
 1. Create a free project in an EU region (Frankfurt is closest).
 2. In Authentication settings, turn on anonymous sign-ins.
 3. In Authentication → Users, use **Add user → Create new user** (not Invite) with your email and a password, and tick Auto Confirm User. An invite sends a link to the app, which can't set a password.
-4. In the SQL editor, run `supabase/schema.sql`, then add both hosts: `insert into hosts select id from auth.users where email in ('sarah@frankle.fyi', 'mark@frankle.fyi');`
+4. In the SQL editor, run `supabase/hosts.sql` (it adds both hosts), then `supabase/setup.sql` and `supabase/seed_setup.sql`, then `supabase/schema.sql` for the game.
 5. Create a public Storage bucket named `portraits` (or `insert into storage.buckets (id, name, public) values ('portraits', 'portraits', true);`), then run the storage policies.
 6. Copy the project URL and the anon (publishable) key from the API settings.
 
@@ -423,7 +386,7 @@ A rehearsal mode on the host remote makes a full run possible with only two or t
 - [ ] Vitest: round builders for 3, 8, 15 and 20 players; every scoring rule and tie case.
 - [ ] RLS check: as a guest, try to read `confessions`, `r2_answers` and others' `votes`, write to `game`, vote outside the window, overwrite another shade, set your own `hidden`, `realm` or `late`, and write confessions after the lobby. All must fail.
 - [ ] Retake a portrait and confirm the overwrite succeeds.
-- [ ] RLS check for `/setup`: without the code, every setup table read and write must fail.
+- [ ] RLS check for `/setup`: run `supabase/setup_rls_checks.md` against the live project.
 - [ ] Friday rehearsal: laptop casting `/tv`, your phone on `/host`, two or three phones plus seeded shades, all three rounds end to end.
 - [ ] Lock a phone mid-round, unlock it and confirm it catches up.
 - [ ] Upload a portrait from an iPhone and an Android phone.
@@ -445,9 +408,5 @@ A rehearsal mode on the host remote makes a full run possible with only two or t
 
 - **Late guests after 23:00:** quick join with name and portrait only; they vote from the next round (see Game logic).
 - **Obol totals:** hidden until the finale.
-
-## Open questions
-
-- [ ] Setup code to share with Mark and the helpers.
 
 The Netlify site is `thecourtbelow` (thecourtbelow.netlify.app). The Friday rehearsal has no fixed time: it happens in the evening while friends help decorate.
