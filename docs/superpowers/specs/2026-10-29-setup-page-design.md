@@ -107,11 +107,12 @@ Helpers see only unassigned tasks, which keeps their list short.
 
 1. Only doable and late to-dos show. Blocked and not-yet tasks and shopping items stay out of Next (Sarah's call, 2026-10-29); Rooms shows them.
 2. Sort by:
-   1. priority (Must, then Should, then Nice to have),
-   2. then **only-mine or unblocks-others** first: a task assigned to this person, or a task that blocks at least one open task someone else could do (assigned to someone else or unassigned),
-   3. then late before on-time,
-   4. then the slot ending soonest,
-   5. then room order and position.
+   1. the "Friday, before friends arrive" slot first, whatever its priority (Sarah's call, 2026-10-29),
+   2. then priority (Must, then Should, then Nice to have),
+   3. then **only-mine or unblocks-others** first: a task assigned to this person, or a task that blocks at least one open task someone else could do (assigned to someone else or unassigned),
+   4. then late before on-time,
+   5. then the slot ending soonest,
+   6. then room order and position.
 
 Ranking priority before only-mine/unblocks is my call: a Nice-to-have that only Sarah can do shouldn't beat a Must anyone can do.
 It's easy to swap in the ranking function if it feels wrong on Friday.

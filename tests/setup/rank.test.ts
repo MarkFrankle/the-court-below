@@ -135,6 +135,12 @@ describe('rankNext', () => {
     expect(ids(rankNext([a, b], sections, [], 'sarah', friNoon))).toEqual([b.id, a.id])
   })
 
+  test('a before-friends task beats a must task', () => {
+    const must = task({ priority: 'must' })
+    const beforeFriends = task({ priority: 'nice', slot: 'fri_before_friends' })
+    expect(ids(rankNext([must, beforeFriends], sections, [], 'sarah', friNoon))).toEqual([beforeFriends.id, must.id])
+  })
+
   test('within a priority, only-mine beats unassigned', () => {
     const a = task()
     const b = task({ assignee: 'sarah' })

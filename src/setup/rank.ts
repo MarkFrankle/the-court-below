@@ -58,8 +58,11 @@ export function rankNext(tasks: Task[], sections: Section[], blockers: Blocker[]
     (v) => (v.state === 'doable' || v.state === 'late') && isForViewer(v.task, viewer) && !shopping.has(v.task.sectionId),
   )
 
+  // Anything due before friends arrive on Friday outranks every priority.
+  const beforeFriends = (v: TaskView) => Number(v.task.slot === 'fri_before_friends')
   return ready.sort((a, b) =>
-    priorityRank(a.task.priority) - priorityRank(b.task.priority)
+    beforeFriends(b) - beforeFriends(a)
+    || priorityRank(a.task.priority) - priorityRank(b.task.priority)
     || Number(isMineOrUnblocking(b, viewer)) - Number(isMineOrUnblocking(a, viewer))
     || Number(b.state === 'late') - Number(a.state === 'late')
     || slotEnd(a.task) - slotEnd(b.task)
