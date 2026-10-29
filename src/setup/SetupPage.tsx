@@ -166,7 +166,6 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
           onRenameSection={renameSection}
           onAddSection={() => addSection('room')}
           onReorder={move}
-          sketches
         />
       )}
       {tab === 'shopping' && (
