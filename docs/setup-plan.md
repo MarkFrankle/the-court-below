@@ -1,6 +1,7 @@
 # Court Below: setup plan
 
-This is the source for the live `/setup` checklist (see the [technical spec](tech-spec.md#setup-page-setup)). Items starting with **Decide** still need a call before they can be done.
+This was the source for the live `/setup` checklist (see the [technical spec](tech-spec.md#setup-page-setup)).
+Once `supabase/seed_setup.sql` has run, the live list in Supabase is the source of truth, and edits go through small SQL scripts that target tasks by `key`. Items starting with **Decide** still need a call before they can be done.
 
 ## Friday plan
 
