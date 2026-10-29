@@ -397,7 +397,7 @@ About 15 minutes in two dashboards, then every push to `main` redeploys.
 
 1. Create a free project in an EU region (Frankfurt is closest).
 2. In Authentication settings, turn on anonymous sign-ins.
-3. In Authentication → Users, add the host user with your email and a password.
+3. In Authentication → Users, use **Add user → Create new user** (not Invite) with your email and a password, and tick Auto Confirm User. An invite sends a link to the app, which can't set a password.
 4. In the SQL editor, run `supabase/schema.sql`, then add yourself as host: `insert into hosts select id from auth.users where email = '<your email>';`
 5. Create a public Storage bucket named `portraits` (or `insert into storage.buckets (id, name, public) values ('portraits', 'portraits', true);`), then run the storage policies.
 6. Copy the project URL and the anon (publishable) key from the API settings.
@@ -448,7 +448,6 @@ A rehearsal mode on the host remote makes a full run possible with only two or t
 
 ## Open questions
 
-- [ ] Which email should be the host account? It's the Supabase login that `/tv` and `/host` sign in with; any address Sarah can receive mail at works.
 - [ ] Setup code to share with Mark and the helpers.
 
 The Netlify site is `thecourtbelow` (thecourtbelow.netlify.app). The Friday rehearsal has no fixed time: it happens in the evening while friends help decorate.
