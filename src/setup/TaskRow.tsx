@@ -1,3 +1,4 @@
+import type { CSSProperties, ReactNode } from 'react'
 import { HOSTS_LABEL, PERSON_NAMES, PRIORITY_LABELS, SLOTS, type Assignee } from './model'
 import type { TaskView } from './rank'
 
@@ -14,6 +15,10 @@ export function TaskRow(props: {
   first?: boolean
   onToggle: (done: boolean) => void
   onEdit?: () => void
+  // Set by SortableTaskRow when hosts can drag to reorder.
+  liRef?: (node: HTMLElement | null) => void
+  liStyle?: CSSProperties
+  handle?: ReactNode
 }) {
   const { task, state, waitingOn } = props.view
   const done = state === 'done'
@@ -21,7 +26,7 @@ export function TaskRow(props: {
   const classes = ['task', done && 'done', waiting && 'waiting', props.first && 'first'].filter(Boolean).join(' ')
 
   return (
-    <li className={classes}>
+    <li className={classes} ref={props.liRef} style={props.liStyle}>
       <button
         className="check"
         role="checkbox"
@@ -54,6 +59,7 @@ export function TaskRow(props: {
           )}
         </div>
       </div>
+      {props.handle}
     </li>
   )
 }

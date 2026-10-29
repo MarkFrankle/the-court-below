@@ -94,18 +94,17 @@ export function keyForSave(draft: Task, stored: Task | undefined, taken: Set<str
   return stored?.key || draft.key || makeKey(draft.text, taken)
 }
 
-// Swaps a task with its neighbour and renumbers the section, so shared positions get separated.
-// Returns only the tasks whose position changed.
-export function swapWithNeighbour(tasks: Task[], id: string, direction: -1 | 1): { id: string; position: number }[] {
+// Moves a task to where another task sits after a drag, among tasks in the same section and priority (rooms sort by priority first).
+// Returns only the positions that change.
+export function reorder(tasks: Task[], id: string, overId: string): { id: string; position: number }[] {
   const task = tasks.find((t) => t.id === id)
-  if (!task) return []
-  // Rooms sort by priority first, so a task only moves among tasks of the same priority.
+  if (!task || id === overId) return []
   const siblings = tasks
     .filter((t) => t.sectionId === task.sectionId && t.priority === task.priority)
     .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))
-  const i = siblings.indexOf(task)
-  const j = i + direction
-  if (j < 0 || j >= siblings.length) return []
-  ;[siblings[i], siblings[j]] = [siblings[j], siblings[i]]
+  const to = siblings.findIndex((t) => t.id === overId)
+  if (to < 0) return []
+  siblings.splice(siblings.indexOf(task), 1)
+  siblings.splice(to, 0, task)
   return siblings.map((t, position) => ({ id: t.id, position })).filter((m) => tasks.find((t) => t.id === m.id)!.position !== m.position)
 }

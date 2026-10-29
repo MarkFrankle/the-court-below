@@ -13,7 +13,6 @@ export function TaskEditor(props: {
   blockedBy: string[]
   onSave: (task: Task, blockedBy: string[]) => Promise<void>
   onDelete: () => void
-  onMove: (direction: -1 | 1) => void
   onClose: () => void
 }) {
   const [draft, setDraft] = useState(props.task)
@@ -98,12 +97,6 @@ export function TaskEditor(props: {
           />
           {error && <p className="error">{error}</p>}
         </div>
-        {!props.isNew && (
-          <div className="actions" style={{ justifyContent: 'flex-start' }}>
-            <button className="button ghost add" onClick={() => props.onMove(-1)}>↑ Move up</button>
-            <button className="button ghost add" onClick={() => props.onMove(1)}>↓ Move down</button>
-          </div>
-        )}
         <div className="actions">
           {props.isNew ? <span /> : <button className="button danger" onClick={props.onDelete}>Delete</button>}
           <span style={{ display: 'flex', gap: '0.5rem' }}>

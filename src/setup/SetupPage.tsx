@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as api from './api'
-import { keyForSave, makeKey, swapWithNeighbour, type Section, type Task } from './model'
+import { keyForSave, makeKey, reorder, type Section, type Task } from './model'
 import { NextView } from './NextView'
 import { PriorityView } from './PriorityView'
 import { RoomView } from './RoomView'
@@ -116,8 +116,8 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
     undo.show(`Deleted: ${task.text}`, () => run(() => api.restoreTask(task, related)))
   }
 
-  function move(task: Task, direction: -1 | 1) {
-    const moves = swapWithNeighbour(data.tasks, task.id, direction)
+  function move(id: string, overId: string) {
+    const moves = reorder(data.tasks, id, overId)
     if (moves.length === 0) return
     for (const m of moves) data.patchTask(m.id, { position: m.position })
     run(() => api.setPositions(moves))
@@ -165,6 +165,7 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
           onAdd={add}
           onRenameSection={renameSection}
           onAddSection={() => addSection('room')}
+          onReorder={move}
           sketches
         />
       )}
@@ -175,6 +176,7 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
           onAdd={add}
           onRenameSection={renameSection}
           onAddSection={() => addSection('shopping')}
+          onReorder={move}
         />
       )}
       {tab === 'priority' && <PriorityView {...viewProps} />}
@@ -188,7 +190,6 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
           blockedBy={data.blockers.filter((b) => b.itemId === editing.task.id).map((b) => b.blockedById)}
           onSave={save}
           onDelete={() => remove(editing.task)}
-          onMove={(d) => move(editing.task, d)}
           onClose={() => setEditing(null)}
         />
       )}

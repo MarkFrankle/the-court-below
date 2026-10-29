@@ -1,5 +1,6 @@
-import type { Blocker, Section, Task, Viewer } from './model'
-import { groupByRoom } from './rank'
+import { PRIORITY_ORDER, type Blocker, type Section, type Task, type Viewer } from './model'
+import { groupByRoom, type TaskView } from './rank'
+import { SortableTasks } from './SortableTasks'
 import { TaskRow } from './TaskRow'
 
 const SKETCHES = [
@@ -22,9 +23,16 @@ export function RoomView(props: {
   onAdd: (section: Section) => void
   onRenameSection: (section: Section) => void
   onAddSection: () => void
+  onReorder: (id: string, overId: string) => void
   sketches?: boolean
 }) {
   const groups = groupByRoom(props.tasks, props.sections, props.blockers, props.viewer, props.now)
+  const rowProps = (view: TaskView) => ({
+    editors: props.editors,
+    canEdit: props.canEdit,
+    onToggle: (done: boolean) => props.onToggle(view.task, done),
+    onEdit: () => props.onEdit(view.task),
+  })
   return (
     <>
       {groups.map(({ section, items }) => (
@@ -39,18 +47,15 @@ export function RoomView(props: {
               {items.filter((v) => v.state === 'done').length} of {items.length} done
             </span>
           </div>
-          <ul className="tasks">
-            {items.map((view) => (
-              <TaskRow
-                key={view.task.id}
-                view={view}
-                editors={props.editors}
-                canEdit={props.canEdit}
-                onToggle={(done) => props.onToggle(view.task, done)}
-                onEdit={() => props.onEdit(view.task)}
-              />
-            ))}
-          </ul>
+          {props.canEdit ? (
+            PRIORITY_ORDER.map((p) => items.filter((v) => v.task.priority === p)).filter((run) => run.length > 0).map((run) => (
+              <SortableTasks key={run[0].task.priority} items={run} row={rowProps} onReorder={props.onReorder} />
+            ))
+          ) : (
+            <ul className="tasks">
+              {items.map((view) => <TaskRow key={view.task.id} view={view} {...rowProps(view)} />)}
+            </ul>
+          )}
           {props.canEdit && (
             <button className="button ghost add" onClick={() => props.onAdd(section)}>+ Add task</button>
           )}

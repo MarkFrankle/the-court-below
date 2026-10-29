@@ -411,3 +411,22 @@ button.task-text {
   width: 100%;
   border-radius: 0.5rem;
 }
+
+/* Hosts drag rows by this handle; touch-action lets a finger drag instead of scrolling */
+.drag-handle {
+  flex: none;
+  align-self: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin: -0.5rem -0.5rem -0.5rem 0;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 1.1rem;
+  cursor: grab;
+  touch-action: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}

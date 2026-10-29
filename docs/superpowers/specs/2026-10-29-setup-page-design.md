@@ -124,7 +124,7 @@ The ranking is a pure function (tasks, blockers, person, now in, ordered list ou
 ## Rooms
 
 Every to-do, open and done, grouped by section in section order; shopping sections live in their own tab.
-Within a section, Must comes before Should before Nice to have, then the hosts' own order; moving a task up or down only swaps it with a task of the same priority.
+Within a section, Must comes before Should before Nice to have, then the hosts' own order; hosts reorder by dragging the ☰ handle on each row, and a task only moves among tasks of the same priority.
 Open tasks show their state label (late, waiting on, slot), assignee and priority.
 Done tasks stay in place, struck through, with "done by".
 The layout sketches show as read-only images at the bottom, as in the current spec.
@@ -142,7 +142,7 @@ Shopping never shows in Next, but a shopping item can still block a to-do.
 ## Editing (Sarah and Mark only)
 
 - Add, edit, delete tasks; delete has a 5-second undo.
-- Add and rename sections; move tasks up and down within a section (among tasks of the same priority), and to another section.
+- Add and rename sections; drag tasks to reorder them within a section (among tasks of the same priority), and move them to another section from the editor.
 - Set assignee, priority, slot, note.
 - Blockers: pick from a searchable list of tasks. Reject a blocker that would create a loop.
 - Helpers never see edit controls.
