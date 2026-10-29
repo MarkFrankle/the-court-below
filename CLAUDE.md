@@ -26,7 +26,9 @@ Mark may take over building the app or the game from the spec, so keep the docs 
   Vite 8 crashes npm 10.8.2 on install (`Cannot read properties of null (reading 'edgesOut')`), so stay on Vite 7.
 - Netlify builds from `main` via `netlify.toml` (Node 22, SPA redirect). Every push to `main` deploys.
 - Supabase (project "TheCourtBelow", org "Frankle", free tier): anonymous auth for guests and setup helpers, email + password host user, Postgres + RLS, Realtime `postgres_changes`, Storage bucket `portraits`.
-- Env: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` in `.env.local` locally and in Netlify's environment variables.
+- Supabase project ref `jtkxpxbrdusbylbhtprl` (`https://jtkxpxbrdusbylbhtprl.supabase.co`).
+- Env: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (the `sb_publishable_...` key) in `.env.local` locally and in Netlify's environment variables. Never use the secret or service_role key in the app.
+- Supabase MCP is in `.mcp.json`, read-only on purpose: use it to inspect tables, policies and logs. Schema changes are still pasted into the SQL editor by hand.
 
 ## Rules
 
@@ -47,7 +49,7 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 
 ## Open
 
-- Before `/setup` works: pick the setup code (several words, not a PIN), add the env vars locally and in Netlify.
+- Before `/setup` works: pick the setup code (several words, not a PIN), add the env vars in Netlify (done locally), create Mark's host user.
 - Mark's GitHub and Supabase access, if he takes over.
 - The unreadable "M:" under Drinks in `docs/sketches/menu-and-todo.jpg`: ask Mark.
 
