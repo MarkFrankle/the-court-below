@@ -1,0 +1,58 @@
+:root {
+  --ink: #0b0709;
+  --plum: #2a1424;
+  --plum-soft: #3d1f35;
+  --gold: #c9a45c;
+  --gold-soft: #e6d3a3;
+  --text: #ece4dc;
+  --muted: #a3958f;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--gold-soft);
+}
+
+.placeholder {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  background: radial-gradient(ellipse at top, var(--plum) 0%, var(--ink) 70%);
+}
+
+.placeholder h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 9vw, 5rem);
+  letter-spacing: 0.02em;
+}
+
+.placeholder p {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
