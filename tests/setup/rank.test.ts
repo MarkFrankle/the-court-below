@@ -185,6 +185,14 @@ describe('groups', () => {
     expect(groups[2].items).toEqual([])
   })
 
+  test('groupByRoom puts must before should before nice, then position', () => {
+    const nice = task({ priority: 'nice', position: 0 })
+    const should = task({ priority: 'should', position: 1 })
+    const must = task({ priority: 'must', position: 2 })
+    const groups = groupByRoom([nice, should, must], sections, [], 'sarah', friNoon)
+    expect(groups[0].items.map((v) => v.task.id)).toEqual([must.id, should.id, nice.id])
+  })
+
   test('groupByPriority groups must, should, nice', () => {
     const a = task({ priority: 'nice' })
     const b = task({ priority: 'must' })

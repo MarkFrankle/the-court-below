@@ -99,8 +99,9 @@ export function keyForSave(draft: Task, stored: Task | undefined, taken: Set<str
 export function swapWithNeighbour(tasks: Task[], id: string, direction: -1 | 1): { id: string; position: number }[] {
   const task = tasks.find((t) => t.id === id)
   if (!task) return []
+  // Rooms sort by priority first, so a task only moves among tasks of the same priority.
   const siblings = tasks
-    .filter((t) => t.sectionId === task.sectionId)
+    .filter((t) => t.sectionId === task.sectionId && t.priority === task.priority)
     .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))
   const i = siblings.indexOf(task)
   const j = i + direction

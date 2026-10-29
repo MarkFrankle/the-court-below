@@ -102,7 +102,7 @@ export function groupByRoom(tasks: Task[], sections: Section[], blockers: Blocke
       section,
       items: tasks
         .filter((t) => t.sectionId === section.id)
-        .sort((a, b) => a.position - b.position)
+        .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority) || a.position - b.position)
         .map((t) => views.get(t.id)!),
     }))
 }

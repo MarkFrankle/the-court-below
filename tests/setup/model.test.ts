@@ -48,3 +48,8 @@ test('swapWithNeighbour separates tasks that share a position', () => {
   for (const m of moves) positions.set(m.id, m.position)
   expect(new Set(positions.values()).size).toBe(3)
 })
+
+test('swapWithNeighbour skips tasks of another priority, since rooms sort by priority first', () => {
+  const tasks = [t('a', 0), { ...t('m', 1), priority: 'must' as const }, t('b', 2)]
+  expect(swapWithNeighbour(tasks, 'b', -1)).toEqual([{ id: 'b', position: 0 }, { id: 'a', position: 1 }])
+})
