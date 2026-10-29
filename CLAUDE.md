@@ -41,11 +41,11 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 - Late guests after 23:00 get a quick form (name and portrait only); they vote from the next round and aren't guessed, writers or judged. Spec: `shades.late`.
 - Obol totals stay hidden until the finale.
 - The Netlify site is `thecourtbelow`.
+- No migrations: SQL lives in `supabase/*.sql` as the spec lays out, and gets pasted into the Supabase SQL editor by hand. Never create `supabase/migrations/`; the Supabase GitHub integration would apply it to production on push.
 - The host account is a user in the Supabase project (Authentication → Users), separate from Sarah's GitHub-based dashboard login.
 
 ## Open
 
-- Supabase's GitHub integration is connected with "Deploy to production" on for `main`. Recommended (not yet confirmed by Sarah): put schema in `supabase/migrations/` so pushes apply it, instead of the spec's hand-pasted `supabase/schema.sql`. Confirm, then update the spec's repo layout and deploy steps.
 - Before `/setup` works: turn on anonymous sign-ins in Supabase, create the host user, pick the setup code (several words, not a PIN), add the env vars locally and in Netlify.
 - Host account email.
 - Mark's GitHub and Supabase access, if he takes over.
