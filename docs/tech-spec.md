@@ -398,7 +398,7 @@ About 15 minutes in two dashboards, then every push to `main` redeploys.
 1. Create a free project in an EU region (Frankfurt is closest).
 2. In Authentication settings, turn on anonymous sign-ins.
 3. In Authentication → Users, use **Add user → Create new user** (not Invite) with your email and a password, and tick Auto Confirm User. An invite sends a link to the app, which can't set a password.
-4. In the SQL editor, run `supabase/schema.sql`, then add yourself as host: `insert into hosts select id from auth.users where email = '<your email>';`
+4. In the SQL editor, run `supabase/schema.sql`, then add both hosts: `insert into hosts select id from auth.users where email in ('sarah@frankle.fyi', 'mark@frankle.fyi');`
 5. Create a public Storage bucket named `portraits` (or `insert into storage.buckets (id, name, public) values ('portraits', 'portraits', true);`), then run the storage policies.
 6. Copy the project URL and the anon (publishable) key from the API settings.
 

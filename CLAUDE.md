@@ -42,7 +42,7 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 - Obol totals stay hidden until the finale.
 - The Netlify site is `thecourtbelow`.
 - No migrations: SQL lives in `supabase/*.sql` as the spec lays out, and gets pasted into the Supabase SQL editor by hand. Never create `supabase/migrations/`; the Supabase GitHub integration would apply it to production on push.
-- The host account is a user in the Supabase project (Authentication → Users), `sarah@frankle.fyi` with a password, separate from Sarah's GitHub-based dashboard login. It becomes host once the schema exists: `insert into hosts select id from auth.users where email = 'sarah@frankle.fyi';`
+- Two host accounts, both users in the Supabase project (Authentication → Users → Create new user, with a password): `sarah@frankle.fyi` and `mark@frankle.fyi`. Separate from Sarah's GitHub-based dashboard login. They become hosts once the schema exists: `insert into hosts select id from auth.users where email in ('sarah@frankle.fyi', 'mark@frankle.fyi');`
 - Supabase auth: anonymous sign-ins on, new-user signups on (anonymous sign-in needs it), Site URL `https://thecourtbelow.netlify.app`.
 
 ## Open
