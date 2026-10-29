@@ -88,3 +88,23 @@ export function makeKey(text: string, taken: Set<string>): string {
   if (!slug) return `task-${suffix()}`
   return taken.has(slug) ? `${slug}-${suffix()}` : slug
 }
+
+// A draft from the editor may have an empty key; the stored one always wins, so scripts keep working.
+export function keyForSave(draft: Task, stored: Task | undefined, taken: Set<string>): string {
+  return stored?.key || draft.key || makeKey(draft.text, taken)
+}
+
+// Swaps a task with its neighbour and renumbers the section, so shared positions get separated.
+// Returns only the tasks whose position changed.
+export function swapWithNeighbour(tasks: Task[], id: string, direction: -1 | 1): { id: string; position: number }[] {
+  const task = tasks.find((t) => t.id === id)
+  if (!task) return []
+  const siblings = tasks
+    .filter((t) => t.sectionId === task.sectionId)
+    .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))
+  const i = siblings.indexOf(task)
+  const j = i + direction
+  if (j < 0 || j >= siblings.length) return []
+  ;[siblings[i], siblings[j]] = [siblings[j], siblings[i]]
+  return siblings.map((t, position) => ({ id: t.id, position })).filter((m) => tasks.find((t) => t.id === m.id)!.position !== m.position)
+}

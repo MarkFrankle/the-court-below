@@ -104,8 +104,13 @@ export async function setBlockers(itemId: string, blockedByIds: string[]): Promi
     .map((r) => r.blocked_by_id)
   const remove = current.filter((id) => !blockedByIds.includes(id))
   const add = blockedByIds.filter((id) => !current.includes(id))
-  if (remove.length > 0) check(await supabase.from('setup_blockers').delete().eq('item_id', itemId).in('blocked_by_id', remove))
+  // Insert first: if a new blocker makes a loop, the existing ones are still there.
   if (add.length > 0) check(await supabase.from('setup_blockers').insert(add.map((id) => ({ item_id: itemId, blocked_by_id: id }))))
+  if (remove.length > 0) check(await supabase.from('setup_blockers').delete().eq('item_id', itemId).in('blocked_by_id', remove))
+}
+
+export async function setPositions(moves: { id: string; position: number }[]): Promise<void> {
+  for (const m of moves) check(await supabase.from('setup_items').update({ position: m.position }).eq('id', m.id))
 }
 
 export async function saveSection(section: Section): Promise<void> {

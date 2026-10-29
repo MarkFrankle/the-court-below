@@ -144,9 +144,15 @@
   place-items: center;
   font-size: 1rem;
   font-weight: 700;
-  /* A bigger invisible hit area for fingers */
+  position: relative;
   outline-offset: 2px;
-  box-shadow: 0 0 0 0.5rem transparent;
+}
+
+/* A 44px hit area for fingers around the visible 28px box */
+.check::before {
+  content: '';
+  position: absolute;
+  inset: -0.5rem;
 }
 
 .check[aria-checked='true'] {

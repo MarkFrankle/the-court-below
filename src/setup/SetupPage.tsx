@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as api from './api'
-import { makeKey, type Section, type Task } from './model'
+import { keyForSave, makeKey, swapWithNeighbour, type Section, type Task } from './model'
 import { NextView } from './NextView'
 import { PriorityView } from './PriorityView'
 import { RoomView } from './RoomView'
@@ -45,8 +45,14 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
 
   // Slots roll over without a reload.
   useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 60_000)
-    return () => window.clearInterval(id)
+    const tick = () => setNow(new Date())
+    const id = window.setInterval(tick, 60_000)
+    // Timers are throttled while a phone is locked, so catch up on unlock.
+    document.addEventListener('visibilitychange', tick)
+    return () => {
+      window.clearInterval(id)
+      document.removeEventListener('visibilitychange', tick)
+    }
   }, [])
 
   function chooseTab(t: Tab) {
@@ -89,10 +95,10 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
 
   async function save(task: Task, blockedBy: string[]) {
     const original = data.tasks.find((t) => t.id === task.id)
-    let next = task
-    if (!original) {
-      next = { ...task, key: makeKey(task.text, new Set(data.tasks.map((t) => t.key))) }
-    } else if (original.sectionId !== task.sectionId) {
+    const key = keyForSave(task, original, new Set(data.tasks.map((t) => t.key)))
+    // Position comes from the live list, since moves happen outside the editor's draft.
+    let next = { ...task, key, position: original?.position ?? task.position }
+    if (original && original.sectionId !== task.sectionId) {
       // Moving to another room puts the task last there.
       const there = data.tasks.filter((t) => t.sectionId === task.sectionId)
       next = { ...task, position: Math.max(-1, ...there.map((t) => t.position)) + 1 }
@@ -102,7 +108,8 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
     data.refresh()
   }
 
-  function remove(task: Task) {
+  function remove(snapshot: Task) {
+    const task = data.tasks.find((t) => t.id === snapshot.id) ?? snapshot
     const related = data.blockers.filter((b) => b.itemId === task.id || b.blockedById === task.id)
     setEditing(null)
     run(() => api.deleteTask(task.id))
@@ -110,15 +117,10 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
   }
 
   function move(task: Task, direction: -1 | 1) {
-    const siblings = data.tasks.filter((t) => t.sectionId === task.sectionId).sort((a, b) => a.position - b.position)
-    const i = siblings.findIndex((t) => t.id === task.id)
-    const other = siblings[i + direction]
-    if (!other) return
-    run(async () => {
-      await api.saveTask({ ...task, position: other.position })
-      await api.saveTask({ ...other, position: task.position })
-    })
-    setEditing({ task: { ...task, position: other.position }, isNew: false })
+    const moves = swapWithNeighbour(data.tasks, task.id, direction)
+    if (moves.length === 0) return
+    for (const m of moves) data.patchTask(m.id, { position: m.position })
+    run(() => api.setPositions(moves))
   }
 
   function renameSection(section: Section) {
@@ -162,7 +164,7 @@ function Checklist(props: { session: api.Session; onSignOut: () => void }) {
       {tab === 'priority' && <PriorityView {...viewProps} />}
       {editing && (
         <TaskEditor
-          key={editing.task.id + editing.task.position}
+          key={editing.task.id}
           task={editing.task}
           isNew={editing.isNew}
           tasks={data.tasks}

@@ -38,7 +38,8 @@ export function useSetupData(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return
     load()
-    const channel = supabase.channel('setup')
+    // A fresh topic each run: supabase.channel() hands back a channel that is still leaving, which never resubscribes.
+    const channel = supabase.channel(`setup-${crypto.randomUUID()}`)
     for (const table of ['setup_sections', 'setup_items', 'setup_blockers', 'setup_editors']) {
       channel.on('postgres_changes', { event: '*', schema: 'public', table }, refresh)
     }
