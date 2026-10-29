@@ -51,7 +51,6 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 
 ## Open
 
-- Before `/setup` works: add the env vars in Netlify (done locally), create Mark's host user.
 - Mark's GitHub and Supabase access, if he takes over.
 - The unreadable "M:" under Drinks in `docs/sketches/menu-and-todo.jpg`: ask Mark.
 

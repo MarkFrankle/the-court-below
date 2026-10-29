@@ -3,13 +3,6 @@ import { groupByRoom, type TaskView } from './rank'
 import { SortableTasks } from './SortableTasks'
 import { TaskRow } from './TaskRow'
 
-const SKETCHES = [
-  ['guest-room.jpg', 'Guest room sketch'],
-  ['kitchen.jpg', 'Kitchen sketch'],
-  ['living-room.jpg', 'Living room notes'],
-  ['menu-and-todo.jpg', 'Menu and to-do notes'],
-]
-
 export function RoomView(props: {
   tasks: Task[]
   sections: Section[]
@@ -24,7 +17,6 @@ export function RoomView(props: {
   onRenameSection: (section: Section) => void
   onAddSection: () => void
   onReorder: (id: string, overId: string) => void
-  sketches?: boolean
 }) {
   const groups = groupByRoom(props.tasks, props.sections, props.blockers, props.viewer, props.now)
   const rowProps = (view: TaskView) => ({
@@ -63,13 +55,6 @@ export function RoomView(props: {
       ))}
       {props.canEdit && (
         <p><button className="button ghost add" onClick={props.onAddSection}>+ Add section</button></p>
-      )}
-      {props.sketches && (
-        <div className="sketches">
-          {SKETCHES.map(([file, alt]) => (
-            <img key={file} src={`/sketches/${file}`} alt={alt} loading="lazy" />
-          ))}
-        </div>
       )}
     </>
   )

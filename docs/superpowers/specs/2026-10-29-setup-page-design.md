@@ -127,7 +127,6 @@ Every to-do, open and done, grouped by section in section order; shopping sectio
 Within a section, Must comes before Should before Nice to have, then the hosts' own order; hosts reorder by dragging the ☰ handle on each row, and a task only moves among tasks of the same priority.
 Open tasks show their state label (late, waiting on, slot), assignee and priority.
 Done tasks stay in place, struck through, with "done by".
-The layout sketches show as read-only images at the bottom, as in the current spec.
 
 ## Priority
 
@@ -136,7 +135,7 @@ Same labels as Rooms.
 
 ## Shopping
 
-The shopping sections, laid out like Rooms (open and done, by shop), without the sketches.
+The shopping sections, laid out like Rooms (open and done, by shop).
 Shopping never shows in Next, but a shopping item can still block a to-do.
 
 ## Editing (Sarah and Mark only)

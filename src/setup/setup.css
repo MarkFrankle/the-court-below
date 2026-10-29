@@ -401,17 +401,6 @@ button.task-text {
   cursor: pointer;
 }
 
-.sketches {
-  display: grid;
-  gap: 1rem;
-  margin-top: 2.5rem;
-}
-
-.sketches img {
-  width: 100%;
-  border-radius: 0.5rem;
-}
-
 /* Hosts drag rows by this handle; touch-action lets a finger drag instead of scrolling */
 .drag-handle {
   flex: none;
