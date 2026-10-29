@@ -2,7 +2,7 @@
 
 Plans for Hades and Persephone's Halloween party, **Saturday 31 October 2026, 20:00–02:00**: the party games, the web app that runs them, and the setup checklists.
 
-**Status:** planning only. No app code yet.
+**Status:** app scaffold live at <https://thecourtbelow.netlify.app>; `/setup` and the game are next.
 
 ## Docs
 
@@ -27,3 +27,15 @@ Sarah and Mark host as Hades and Persephone.
 
 - **Sarah:** games, tech, decor.
 - **Mark:** cocktails and drinks.
+
+## Develop
+
+Needs Node 20.19 or newer.
+
+```bash
+npm install
+cp .env.example .env.local   # fill in the Supabase project URL and anon key
+npm run dev
+```
+
+Every push to `main` deploys to Netlify. Start with the [technical spec](docs/tech-spec.md); copy and game content come from the [game plan](docs/game-plan.md).
