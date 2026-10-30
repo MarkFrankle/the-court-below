@@ -2,7 +2,7 @@
 
 Plans for Hades and Persephone's Halloween party, **Saturday 31 October 2026, 20:00–02:00**: the party games, the web app that runs them, and the setup checklists.
 
-**Status:** live at <https://the-court-below.netlify.app>: `/setup`, and the game (`/`, `/tv`, `/host`) from the `game` branch. `supabase/schema.sql` is in the live project.
+**Status:** live at <https://the-court-below.netlify.app>: `/setup` and the game (`/`, `/tv`, `/host`). `supabase/schema.sql` is in the live project.
 
 ## Docs
 
