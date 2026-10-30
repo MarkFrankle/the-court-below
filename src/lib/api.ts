@@ -32,11 +32,15 @@ const toMatchup = (r: MatchupRow): Matchup => ({
 })
 export const toVote = (r: VoteRow): Vote => ({ voterId: r.voter_id, round: r.round, item: r.item, choice: r.choice })
 
+export class RateLimited extends Error {}
+
 // Guests and the TV sign in anonymously; an existing session (including a host's) is kept.
 export async function ensureAnonymous(): Promise<string> {
   const { data } = await supabase.auth.getSession()
   if (data.session) return data.session.user.id
   const res = await supabase.auth.signInAnonymously()
+  // Supabase caps anonymous sign-ins per IP address per hour, and the whole party shares one Wi-Fi address.
+  if (res.error?.status === 429) throw new RateLimited()
   if (res.error || !res.data.user) throw new Error(res.error?.message ?? 'Could not sign in.')
   return res.data.user.id
 }

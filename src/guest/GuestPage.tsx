@@ -10,7 +10,10 @@ export function GuestPage() {
   const [userId, setUserId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   useEffect(() => {
-    api.ensureAnonymous().then(setUserId, () => setError("The Court can't be reached. Check your Wi-Fi and reload the page."))
+    api.ensureAnonymous().then(setUserId, (e) =>
+      setError(e instanceof api.RateLimited
+        ? 'Too many phones have joined from this Wi-Fi in the last hour. Tell Hades or Persephone, or try again on mobile data.'
+        : "The Court can't be reached. Check your Wi-Fi and reload the page."))
   }, [])
 
   if (error) return <Shell><p className="error">{error}</p></Shell>
