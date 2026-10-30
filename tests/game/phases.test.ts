@@ -46,3 +46,39 @@ test('skips round 2 when it has no matchups', () => {
 test('skips round 1 when it has no items', () => {
   expect(at('intro', 2, { ...c, r1: 0 })).toEqual({ phase: 'r2_intro', step: 0, seconds: 0 })
 })
+
+import { prevStep } from '../../src/lib/phases'
+
+// Every screen Next visits from the lobby, in order.
+function walk(counts: typeof c) {
+  const seq: { phase: string; step: number }[] = [{ phase: 'lobby', step: 0 }]
+  for (;;) {
+    const n = nextStep(seq[seq.length - 1] as never, counts)
+    if (!n) return seq
+    seq.push({ phase: n.phase, step: n.step })
+  }
+}
+
+test.each([
+  ['every round', c],
+  ['no round 2', { ...c, r2: 0 }],
+  ['no round 1', { ...c, r1: 0 }],
+  ['small', { r1: 1, r2: 3, r3: 3 }],
+])('back undoes next, screen by screen (%s)', (_, counts) => {
+  const seq = walk(counts)
+  // From the second opening screen on, back lands on the screen before.
+  for (let i = 2; i < seq.length; i++) {
+    expect(prevStep(seq[i] as never, counts), `${seq[i].phase} ${seq[i].step}`).toMatchObject(seq[i - 1])
+  }
+})
+
+test('back stops at the first opening screen, since the rounds are built', () => {
+  expect(prevStep({ phase: 'intro', step: 0 }, c)).toBeNull()
+  expect(prevStep({ phase: 'lobby', step: 0 }, c)).toBeNull()
+})
+
+test('back into a vote restarts its clock', () => {
+  expect(prevStep({ phase: 'r1_reveal', step: 3 }, c)).toEqual({ phase: 'r1_vote', step: 3, seconds: 20 })
+  expect(prevStep({ phase: 'r2_vote', step: 0 }, c)).toEqual({ phase: 'r2_write', step: 0, seconds: 90 })
+  expect(prevStep({ phase: 'r3_reveal', step: 0 }, c)).toEqual({ phase: 'r3_vote', step: 14, seconds: 12 })
+})

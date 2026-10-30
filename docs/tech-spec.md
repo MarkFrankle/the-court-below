@@ -63,12 +63,13 @@ The display and the controls are separate routes, because casting a Chrome tab m
 
 **TV screens:** Hall of Shades in `lobby` and `after` (one portrait at a time, 8-second crossfade, name and guise, a QR code of the site in a corner, realm labels in `after`), the opening (lines, the obol line, the Seeds toast), each round's intro, each item with a countdown and a "9 of 15 have judged" counter, reveals, the realm-by-realm reveal, the obol leaderboard and the Favored of Hades.
 
-**Host remote:** the phase in words, the countdown and the live counter, Next (labelled with where it goes, and during Round 2 writing with how many petitions are still missing), +10 seconds, the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades ("Write test petitions" during Round 2 writing), and Reset game (with a confirmation).
+**Host remote:** the phase in words, the countdown and the live counter, Next (labelled with where it goes, and during Round 2 writing with how many petitions are still missing), Back (see below), +10 seconds, the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades ("Write test petitions" during Round 2 writing), and Reset game (with a confirmation).
 
 ## Game phases
 
 One row, `game`, holds `phase`, `step` and `deadline_at`. Only the host remote changes it, through `set_phase()`. Every screen renders from it.
 The remote is the engine: Next calls `set_phase()` first, which closes any open vote, then does the new phase's entry work from fresh data. Entry work is idempotent, and the remote reruns it whenever it loads, so a reload or a dead phone mid-reveal is harmless.
+Back (`prevStep()`, the exact inverse of Next) undoes what the screen it leaves had written: leaving a reveal for its vote deletes that item's obols and hides the result, so the vote reopens with a fresh clock and Next tallies again; leaving the first Round 2 vote takes those answers off the TV; leaving a Judgment reveal clears the realms it showed. Back is disabled on the first opening screen, because the rounds are already built from the shades in the lobby.
 Two remotes are safe too. Next passes `set_phase()` the phase and step it saw, and the database refuses the move if the game has already left them, so two presses at once move one step. The rounds are written by `build_rounds()` in one transaction, which does nothing if they already exist.
 
 | Phase | `step` means | Timer | Entry work on the remote |

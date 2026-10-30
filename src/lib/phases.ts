@@ -40,3 +40,33 @@ export function nextStep(g: { phase: Phase; step: number }, c: Counts): Next | n
     case 'after': return null
   }
 }
+
+// The last screen of each round, or of the opening, falling back past rounds with nothing in them.
+function endBefore(round: 1 | 2 | 3 | 4, c: Counts): Next {
+  if (round > 3 && c.r3 > 0) return to('r3_reveal', STEPS.r3_reveal - 1)
+  if (round > 2 && c.r2 > 0) return to('r2_reveal', c.r2 - 1)
+  if (round > 1 && c.r1 > 0) return to('r1_reveal', c.r1 - 1)
+  return to('intro', STEPS.intro - 1)
+}
+
+// What the remote's Back button moves to: the inverse of nextStep. Null in the lobby and on the first
+// opening screen, since the rounds are built from the shades there when the Court opens.
+export function prevStep(g: { phase: Phase; step: number }, c: Counts): Next | null {
+  const { phase, step } = g
+  switch (phase) {
+    case 'lobby': return null
+    case 'intro': return step > 0 ? to('intro', step - 1) : null
+    case 'r1_intro': return endBefore(1, c)
+    case 'r1_vote': return step > 0 ? to('r1_reveal', step - 1) : to('r1_intro')
+    case 'r1_reveal': return to('r1_vote', step)
+    case 'r2_intro': return endBefore(2, c)
+    case 'r2_write': return to('r2_intro')
+    case 'r2_vote': return step > 0 ? to('r2_reveal', step - 1) : to('r2_write')
+    case 'r2_reveal': return to('r2_vote', step)
+    case 'r3_intro': return step > 0 ? to('r3_intro', step - 1) : endBefore(3, c)
+    case 'r3_vote': return step > 0 ? to('r3_vote', step - 1) : to('r3_intro', STEPS.r3_intro - 1)
+    case 'r3_reveal': return step > 0 ? to('r3_reveal', step - 1) : to('r3_vote', c.r3 - 1)
+    case 'finale': return step > 0 ? to('finale', step - 1) : endBefore(4, c)
+    case 'after': return to('finale', STEPS.finale - 1)
+  }
+}

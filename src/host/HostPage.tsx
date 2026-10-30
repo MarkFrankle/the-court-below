@@ -1,14 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import * as api from '../lib/api'
 import { useCountdown } from '../lib/clock'
-import { nextStep } from '../lib/phases'
+import { nextStep, prevStep } from '../lib/phases'
 import { voters } from '../lib/rounds'
 import { useGame } from '../lib/useGame'
 import { useLiveCount } from '../lib/useLiveCount'
 import { supabase } from '../lib/supabase'
 import { Portrait } from '../ui/Portrait'
 import { describe } from './describe'
-import { advance, enter } from './engine'
+import { advance, enter, retreat } from './engine'
 import { Moderation } from './Moderation'
 import { autoVote, seedTestShades } from './rehearsal'
 import '../ui/game.css'
@@ -98,6 +98,7 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
 
   const counts = { r1: data.r1.length, r2: data.r2.length, r3: data.r3.length }
   const next = nextStep(game, counts)
+  const prev = prevStep(game, counts)
   const voterCount = voters(data.shades).size
   const writers = data.host?.assignments.length ?? 0
   // Leaving the writing early shows those petitions as "no petition", so Next says how many are still missing.
@@ -121,9 +122,14 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
       <button className="button host-next" disabled={busy || !next} onClick={() => run(advance)}>
         {next ? `Next: ${describe(next, counts)}${missing > 0 ? ` (${missing} of ${writers} petitions missing)` : ''}` : 'The Court is adjourned'}
       </button>
-      {game.deadlineAt && (
-        <button className="button ghost" disabled={busy} onClick={() => run(() => api.addTime(10))}>+10 seconds</button>
-      )}
+      <div className="host-row">
+        {prev && (
+          <button className="button ghost" disabled={busy} onClick={() => run(retreat)}>Back: {describe(prev, counts)}</button>
+        )}
+        {game.deadlineAt && (
+          <button className="button ghost" disabled={busy} onClick={() => run(() => api.addTime(10))}>+10 seconds</button>
+        )}
+      </div>
       {(error ?? loadError) && <p className="error">{error ?? loadError}</p>}
 
       <Moderation data={data} busy={busy} run={run} />

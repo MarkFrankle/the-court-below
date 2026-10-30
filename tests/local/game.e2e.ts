@@ -2,7 +2,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { beforeAll, expect, test } from 'vitest'
 import * as api from '../../src/lib/api'
 import { supabase } from '../../src/lib/supabase'
-import { advance } from '../../src/host/engine'
+import { advance, retreat } from '../../src/host/engine'
 import { autoVote, seedTestShades } from '../../src/host/rehearsal'
 
 const URL = process.env.VITE_SUPABASE_URL!
@@ -149,6 +149,28 @@ test('round 1 runs end to end', async () => {
     // A vote after the reveal is refused.
     const late = await guests[2].client.from('votes').upsert({ voter_id: guests[2].id, round: 1, item: i, choice: authorId }, { onConflict: 'voter_id,round,item' })
     expect(late.error?.message).toMatch(/row-level security/)
+
+    if (i === 0) {
+      // Back reopens the vote and takes the result down; Next tallies again with the changed vote.
+      const before = item.correct!
+      await retreat()
+      const back = await api.fetchAll({ userId: null, host: true })
+      expect(back.game).toMatchObject({ phase: 'r1_vote', step: 0 })
+      expect(back.game.deadlineAt).not.toBeNull()
+      expect(back.r1[0]).toMatchObject({ authorId: null, correct: null, guessers: null })
+      const voteRows = ok(await supabase.from('obols').select('id').eq('round', 1).eq('item', 0))
+      expect(voteRows).toEqual([])
+      if (guests[2].id !== authorId) {
+        ok(await guests[2].client.from('votes').upsert({ voter_id: guests[2].id, round: 1, item: 0, choice: authorId }, { onConflict: 'voter_id,round,item' }))
+      }
+      await advance()
+      const again = await api.fetchAll({ userId: null, host: true })
+      expect(again.game).toMatchObject({ phase: 'r1_reveal', step: 0 })
+      expect(again.r1[0].authorId).toBe(authorId)
+      // Ben first voted for Ana; his new vote names the author, one more right guess unless Ana or Ben wrote it.
+      const benAddsOne = authorId !== guests[1].id && authorId !== guests[2].id
+      expect(again.r1[0].correct).toBe(before + (benAddsOne ? 1 : 0))
+    }
   }
 
   const d = await api.fetchAll({ userId: null, host: true })
@@ -184,6 +206,13 @@ test('round 2 runs end to end', async () => {
   await autoVote(d)
   // 32 slots: Persephone Test (signed out, the host now) and Cal leave 4 empty.
   expect(await api.answerCount()).toBe(28)
+
+  // Back from the first vote to the writing takes those answers off the TV again.
+  await advance()
+  expect(ok(await supabase.from('r2_matchups').select('opened').eq('idx', 0))).toEqual([{ opened: true }])
+  await retreat()
+  expect(await game()).toMatchObject({ phase: 'r2_write' })
+  expect(ok(await supabase.from('r2_matchups').select('opened, answer_a, answer_b').eq('idx', 0))).toEqual([{ opened: false, answer_a: null, answer_b: null }])
 
   await advance()
   d = await api.fetchAll({ userId: null, host: true })
@@ -251,6 +280,18 @@ test('round 3 judges every player and reveals realm by realm', async () => {
   const final = await api.fetchAll({ userId: null, host: true })
   expect(final.game).toMatchObject({ phase: 'r3_reveal', step: 2 })
   for (const id of judged) expect(final.shades.find((s) => s.id === id)?.realm).toBeTruthy()
+
+  // Back through the reveal takes Elysium down again, and back to the vote clears every realm.
+  await retreat()
+  const realmsNow = async () => (await api.fetchAll({ userId: null, host: true })).shades.map((s) => s.realm)
+  expect(await realmsNow()).not.toContain('elysium')
+  await retreat()
+  await retreat()
+  expect(await game()).toMatchObject({ phase: 'r3_vote', step: judged.length - 1 })
+  expect((await realmsNow()).every((r) => r === null)).toBe(true)
+  for (let k = 0; k < 3; k++) await advance()
+  expect(await game()).toMatchObject({ phase: 'r3_reveal', step: 2 })
+  for (const id of judged) expect((await api.fetchAll({ userId: null, host: true })).shades.find((s) => s.id === id)?.realm).toBeTruthy()
 
   await advance()
   expect(await game()).toMatchObject({ phase: 'finale', step: 0 })

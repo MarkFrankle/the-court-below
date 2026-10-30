@@ -1,9 +1,9 @@
 import { PROMPTS } from '../content/prompts'
 import * as api from '../lib/api'
-import { nextStep } from '../lib/phases'
+import { nextStep, prevStep } from '../lib/phases'
 import { buildRound1, buildRound2, buildRound3, players, voters } from '../lib/rounds'
 import { judge, realmsRevealed, scoreRound1, scoreRound2 } from '../lib/scoring'
-import { answerRef, confessionRef, REALMS, type Award } from '../lib/game'
+import { answerRef, confessionRef, REALMS, type Award, type GameState } from '../lib/game'
 import { supabase } from '../lib/supabase'
 
 // The game engine runs on the host remote. Next changes the phase first (which closes any open vote),
@@ -34,7 +34,40 @@ export const advance = () => serial(async () => {
   await doEntry()
 })
 
+// Back undoes what the screen it leaves had written (a reveal's obols and result, the first petitions
+// on the TV, revealed realms), so moving forward again redoes it from the votes as they then stand.
+export const retreat = () => serial(async () => {
+  const d = await fresh()
+  const prev = prevStep(d.game, { r1: d.r1.length, r2: d.r2.length, r3: d.r3.length })
+  if (!prev) return
+  if (!(await api.setPhase(prev.phase, prev.step, prev.seconds, d.game))) return
+  await undo(d.game)
+  await doEntry()
+})
+
 export const enter = () => serial(doEntry)
+
+async function undo(left: GameState) {
+  const { phase, step } = left
+  if (phase === 'r1_reveal') {
+    check(await supabase.from('obols').delete().eq('round', 1).eq('item', step))
+    check(await supabase.from('r1_items').update({ author_id: null, correct: null, guessers: null }).eq('idx', step))
+  }
+  if (phase === 'r2_reveal') {
+    check(await supabase.from('obols').delete().eq('round', 2).eq('item', step))
+    check(await supabase.from('r2_matchups').update({ writer_a: null, writer_b: null, votes_a: null, votes_b: null }).eq('idx', step))
+  }
+  // Back from the first vote to the writing: take the answers off the TV, so edits are copied in again.
+  if (phase === 'r2_vote' && step === 0) {
+    check(await supabase.from('r2_matchups').update({ opened: false, answer_a: null, answer_b: null }).eq('idx', 0))
+  }
+  if (phase === 'r3_reveal') {
+    const keep = new Set(step > 0 ? realmsRevealed(step - 1) : [])
+    for (const realm of REALMS.filter((r) => !keep.has(r))) {
+      check(await supabase.from('shades').update({ realm: null }).eq('realm', realm))
+    }
+  }
+}
 
 async function doEntry(): Promise<void> {
   const d = await fresh()
