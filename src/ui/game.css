@@ -20,6 +20,21 @@
   color: var(--text);
 }
 
+.court .speech-block {
+  max-width: 45ch;
+  margin: 0;
+}
+
+.court .speech-block cite {
+  display: block;
+  margin-bottom: 0.4em;
+  font: 600 0.6em var(--font-body);
+  font-style: normal;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 .court .muted {
   color: var(--muted);
 }

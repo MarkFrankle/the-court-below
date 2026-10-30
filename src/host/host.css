@@ -48,6 +48,24 @@
   color: #e7a3a3;
 }
 
+/* The lines to read aloud for the screen the TV is showing. */
+.host-script {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--plum-soft);
+  border-radius: 1rem;
+  background: rgb(42 20 36 / 0.6);
+}
+
+.host-script .speech-block cite {
+  font-size: 0.7rem;
+}
+
+.host-script .speech {
+  font-size: 1.35rem;
+}
+
 .host .host-next {
   min-height: 5rem;
   font-size: 1.15rem;

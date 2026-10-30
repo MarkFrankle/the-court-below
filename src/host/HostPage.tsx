@@ -3,14 +3,17 @@ import * as api from '../lib/api'
 import { useCountdown } from '../lib/clock'
 import { nextStep, prevStep } from '../lib/phases'
 import { voters } from '../lib/rounds'
+import { favored, totals } from '../lib/scoring'
 import { useGame } from '../lib/useGame'
 import { useLiveCount } from '../lib/useLiveCount'
 import { supabase } from '../lib/supabase'
 import { Portrait } from '../ui/Portrait'
 import { Reconnecting } from '../ui/Reconnecting'
+import { Speech } from '../ui/Speech'
 import { describe } from './describe'
 import { advance, enter, retreat } from './engine'
 import { Moderation } from './Moderation'
+import { script } from './script'
 import { autoVote, seedTestShades } from './rehearsal'
 import '../ui/game.css'
 import './host.css'
@@ -108,6 +111,9 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
   const hasTest = data.shades.some((s) => s.test)
   // Once the rounds are built, hiding a shade in them would leave Round 1 unguessable and their petitions empty.
   const inTrial = new Set(data.r3.map((i) => i.shadeId))
+  // The same Favored of Hades the TV shows.
+  const winners = favored(totals(data.obols), visible.map((s) => s.id)).map((id) => visible.find((s) => s.id === id)!.name)
+  const lines = script(game, winners.join(' and '))
 
   return (
     <main className="court host">
@@ -119,6 +125,12 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
           {game.phase === 'lobby' && <span>{visible.length} shades</span>}
         </div>
       </header>
+
+      {lines.length > 0 && (
+        <section className="host-script" aria-label="Read aloud">
+          {lines.map((l, i) => <Speech key={l.text} line={l} cite={lines[i - 1]?.speaker !== l.speaker} />)}
+        </section>
+      )}
 
       <button className="button host-next" disabled={busy || !next} onClick={() => run(advance)}>
         {next ? `Next: ${describe(next, counts)}${missing > 0 ? ` (${missing} of ${writers} petitions missing)` : ''}` : 'The Court is adjourned'}

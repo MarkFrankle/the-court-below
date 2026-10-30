@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import { obolLine, opening, seeds } from '../content/copy'
+import { obolLine, seeds } from '../content/copy'
 import * as api from '../lib/api'
 import { useGame } from '../lib/useGame'
 import { Reconnecting } from '../ui/Reconnecting'
-import { Speech } from '../ui/Speech'
 import { Hall } from './Hall'
 import { Finale } from './Finale'
 import { Round1 } from './Round1'
@@ -45,7 +44,7 @@ function Tv() {
 function Intro(props: { step: number }) {
   return (
     <section className="tv-stage tv-lines">
-      {props.step === 0 && opening.map((line) => <Speech key={line.text} line={line} />)}
+      {props.step === 0 && <h1 className="display tv-title">The Court Below</h1>}
       {props.step === 1 && <p className="speech tv-big">{obolLine}</p>}
       {props.step === 2 && (
         <>
