@@ -870,16 +870,16 @@ git commit -m "feat: add trial scoring" -m "Co-Authored-By: Claude Opus 5.5 <nor
 - `copy.ts` exports every on-screen line from `docs/game-plan.md`, verbatim and grouped by screen: welcome, form labels, hints and examples, closing, late welcome, opening lines, the obol line, the bound-shades call (Seeds), round intros, Round 1 reveal lines keyed by `'most' | 'half' | 'none'`, the three realms (name and description), the reveal lines, closing lines, and the spec's fixed strings ("Look to the Court", "Frame a shade", "The Court has heard enough", "The Court received no petition", "The petitions are being written", "Your shade is recorded").
   Each speaker line is `{ speaker: 'Hades' | 'Persephone'; text: string }`.
 - `prompts.ts` exports `PROMPTS: Prompt[]`: the 15 from the game plan with their lore notes, then 5 spares.
-  The spares are drafts and need Sarah or Mark to approve them before they ship:
+  The spares were drafted by Claude and approved by Mark on 30 October:
   - `[Name]'s last words before crossing the river:`
   - `The one thing [Name] would smuggle past Cerberus.` (note: *Cerberus is Hades' three-headed guard dog.*)
   - `A terrible name for a cocktail served in the Underworld.`
   - `What Sisyphus would do if he ever got the boulder to the top.` (note: *Sisyphus pushes a boulder uphill for eternity.*)
   - `Hades' least favourite party guest, and why.`
-- The bound-shades forfeit line (game plan, Persephone's Seeds) has no speaker in the plan; give it to Hades, as the plan says "Hades asks the bound shades to step forward".
+- The game plan scripts no line for Hades calling the bound shades forward, so the TV shows only the toast ("To the Court Below, may we never leave.") and Hades ad-libs the call.
 
 - [ ] **Step 1: Write both files.**
-- [ ] **Step 2: Ask Mark to approve the five spare prompts** (or replace them). Don't merge to `main` until he has.
+- [x] **Step 2: Mark approved the five spare prompts.**
 - [ ] **Step 3: Type-check:** `npx tsc -b`. Expected: no errors.
 - [ ] **Step 4: Commit** `feat: add trial copy and prompts`.
 
@@ -1010,7 +1010,7 @@ For `intro`, show the opening lines (step 0), the obol line (step 1) and the bou
 
 - **Phone, `r1_vote`:** a grid of every player except yourself (portrait and name), titled "Frame a shade" for the author and otherwise with the confession above it. Tapping votes; the chosen tile shows the vote read back from the database. After the deadline plus 3 s, or if the write is rejected, "The Court has heard enough".
   The phone knows it's the author by its own `mine.confession` matching the item's text.
-- **TV, `r1_intro`:** Persephone's round intro. **`r1_vote`:** *This shade confesses:* the text, the countdown, and "N of M have judged". **`r1_reveal`:** the author's portrait and name, "K of N guessed right", and the reveal line for `revealTone()`. Until `author_id` arrives, "The Court deliberates".
+- **TV, `r1_intro`:** Persephone's round intro. **`r1_vote`:** *This shade confesses:* the text, the countdown, and "N of M have judged". **`r1_reveal`:** the author's portrait and name, "K of N guessed right", and the reveal line for `revealTone()`. Until `author_id` arrives, the confession stays up (no invented "waiting" line).
 - **Engine:** on `r1_reveal` step `i`, if `r1_items[i].author_id` is null: score with `scoreRound1`, upsert the awards into `obols` (on conflict `shade_id,round,item,reason`), then update the item with `author_id`, `correct` and `guessers`.
 - **Auto-vote:** each test shade votes for a random player other than itself.
 
@@ -1047,7 +1047,7 @@ For `intro`, show the opening lines (step 0), the obol line (step 1) and the bou
 - Create: `src/guest/Petitions.tsx`, `src/guest/ChooseAnswer.tsx`, `src/tv/Round2.tsx`
 - Modify: `src/guest/GuestPage.tsx`, `src/tv/TvPage.tsx`, `src/host/engine.ts`, `src/host/rehearsal.ts`
 
-- **TV, `r2_intro`:** Hades' intro. **`r2_write`:** "The petitions are being written", the countdown and "N of M petitions received". **`r2_vote`:** the prompt (with its note), answers A and B side by side, unsigned; "The Court received no petition" for a missing one. **`r2_reveal`:** the writers' portraits under their answers, and the vote split. "The Court deliberates" until the data lands.
+- **TV, `r2_intro`:** Hades' intro. **`r2_write`:** "The petitions are being written", the countdown and "N of M petitions received". **`r2_vote`:** the prompt (with its note), answers A and B side by side, unsigned; "The Court received no petition" for a missing one. **`r2_reveal`:** the writers' portraits under their answers, and the vote split. The previous screen stays up until the data lands.
 - **Phone, `r2_write`:** your two prompts (from `mine.assignments` joined to `r2`), one text box each (80 max, with a counter), saved on blur and on a Save button, showing "Saved" once read back. Shades without assignments see "Look to the Court".
 - **Phone, `r2_vote`:** A and B as two large buttons. For the two writers the heading says it's a bet on the winner.
 - **Engine:** on `r2_vote` step `i`, if the matchup isn't `opened`: copy each writer's answer (or null if missing or hidden) into `answer_a` and `answer_b` and set `opened`. On `r2_reveal` step `i`, if `votes_a` is null: score with `scoreRound2`, upsert obols, then write `writer_a`, `writer_b`, `votes_a`, `votes_b`.
