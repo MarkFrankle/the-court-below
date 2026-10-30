@@ -56,6 +56,8 @@
 
 /* Hall of Shades */
 .hall {
+  position: relative;
+  isolation: isolate;
   display: grid;
   /* minmax(0, ...): a full row shrinks its shades instead of widening the page. */
   grid-template-columns: minmax(0, 1fr);
@@ -63,21 +65,58 @@
   justify-items: center;
   height: 100%;
   padding: 4vh 4vw;
-  /* The invitation art, darkened at the edges and the bottom so the title and the row read over it. */
-  background:
-    linear-gradient(rgb(11 7 9 / 0.35), rgb(11 7 9 / 0.2) 40%, rgb(11 7 9 / 0.9) 82%),
-    radial-gradient(ellipse at center, transparent 35%, rgb(11 7 9 / 0.75)),
-    url('/halloween-2026.jpeg') center / cover;
   /* Dimmed so it reads as decor rather than a screen to watch. */
   filter: brightness(0.85);
 }
 
+/* The invitation art as atmosphere rather than a picture: dark and softly blurred, which also hides how
+   small the image is. A TV over HDMI lifts dark tones, so it is darker than looks right on a laptop.
+   Overscanned so the blur doesn't fade the edges. */
+.hall::before {
+  content: '';
+  position: absolute;
+  inset: -2rem;
+  z-index: -2;
+  background: url('/halloween-2026.jpeg') center / cover;
+  filter: blur(4px) brightness(0.5) saturate(0.85);
+}
+
+/* A pool of shadow behind the title, and the bottom darkened for the row. */
+.hall::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 55% 30% at 50% 20%, rgb(11 7 9 / 0.75), transparent),
+    linear-gradient(rgb(11 7 9 / 0.3), rgb(11 7 9 / 0.15) 45%, rgb(11 7 9 / 0.9) 82%),
+    radial-gradient(ellipse at center, transparent 40%, rgb(11 7 9 / 0.7));
+}
+
+/* High, over the vaulted ceiling, so it has space of its own rather than crossing the faces. */
 .hall-title {
-  align-self: center;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  align-self: start;
+  margin: 10vh 0 0;
   font-size: 4em;
   letter-spacing: 0.02em;
-  text-shadow: 0 0 0.6em rgb(11 7 9 / 0.9);
+  color: var(--gold);
+  text-shadow: 0 0 0.4em rgb(11 7 9 / 0.9), 0 0 1.2em rgb(11 7 9 / 0.6);
+}
+
+/* Thin gold rules either side, like a title card. */
+.hall-title::before,
+.hall-title::after {
+  content: '';
+  width: 1.2em;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold));
+}
+
+.hall-title::after {
+  background: linear-gradient(to left, transparent, var(--gold));
 }
 
 /* Between the QR code and Netlify's badge, so as wide as the QR code's corner on both sides.
