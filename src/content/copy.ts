@@ -51,7 +51,13 @@ export const round1 = {
 
 export const round2 = {
   title: 'Petitions to Hades',
-  intro: { speaker: 'Hades', text: 'Shades may petition the Court. The most persuasive will be remembered. The rest will be forgotten, as usual.' } as Line,
+  // Most guests won't know Quiplash, so the intro explains the round.
+  rules: [
+    'Your phone gives you two prompts. You have 90 seconds to answer both.',
+    'Each prompt goes to two shades.',
+    'The Court sees both answers to each prompt, unsigned, and votes for the one it likes more.',
+  ],
+  intro: { speaker: 'Hades', text: 'Pander shamelessly. Flattery works on this Court.' } as Line,
   writing: 'The petitions are being written',
   // Shown to the two writers while the room votes; from the game plan's description of Round 2.
   bet: 'Your tap is a bet on which answer will win, worth 1 obol if right.',

@@ -13,6 +13,9 @@ export function Round2(props: { data: GameData }) {
       <section className="tv-stage">
         <p className="tv-round">Round 2</p>
         <h1 className="display tv-title">{round2.title}</h1>
+        <ol className="tv-rules">
+          {round2.rules.map((r) => <li key={r}>{r}</li>)}
+        </ol>
         <Speech line={round2.intro} />
       </section>
     )

@@ -313,3 +313,20 @@
   margin-top: 1vh;
   animation: tv-fade 1.2s ease;
 }
+
+.tv-rules {
+  display: grid;
+  gap: 1.5vh;
+  max-width: 44ch;
+  margin: 0;
+  padding-left: 1.4em;
+  text-align: left;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+
+.tv-rules li::marker {
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-weight: 600;
+}

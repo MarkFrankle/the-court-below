@@ -119,9 +119,13 @@ This is a Quiplash-style writing round. Each prompt goes to two guests, and ever
 - What Sisyphus would do if he ever got the boulder to the top. *Sisyphus pushes a boulder uphill for eternity.*
 - Hades' least favourite party guest, and why.
 
-**Round intro**
+**Round intro** (the TV shows the three rules; Hades reads them, then the last line)
 
-> **Hades:** Shades may petition the Court. The most persuasive will be remembered. The rest will be forgotten, as usual.
+1. Your phone gives you two prompts. You have 90 seconds to answer both.
+2. Each prompt goes to two shades.
+3. The Court sees both answers to each prompt, unsigned, and votes for the one it likes more.
+
+> **Hades:** Pander shamelessly. Flattery works on this Court.
 
 ## Round 3: The Judgment
 
