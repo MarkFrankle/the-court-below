@@ -102,6 +102,8 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
   const writers = data.host?.assignments.length ?? 0
   const visible = data.shades.filter((s) => !s.hidden)
   const hasTest = data.shades.some((s) => s.test)
+  // Once the rounds are built, hiding a shade in them would leave Round 1 unguessable and their petitions empty.
+  const inTrial = new Set(data.r3.map((i) => i.shadeId))
 
   return (
     <main className="court host">
@@ -126,6 +128,7 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
 
       <section className="host-section">
         <h2 className="display">Shades</h2>
+        {inTrial.size > 0 && <p className="muted">Shades in the Trial can't be hidden. Hide duplicates in the lobby.</p>}
         <ul className="host-shades">
           {data.shades.map((s) => (
             <li key={s.id} className={s.hidden ? 'is-hidden' : undefined}>
@@ -138,7 +141,7 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
               </span>
               <button
                 className="link"
-                disabled={busy}
+                disabled={busy || inTrial.has(s.id)}
                 onClick={() => run(async () => {
                   const res = await supabase.from('shades').update({ hidden: !s.hidden }).eq('id', s.id)
                   if (res.error) throw new Error(res.error.message)

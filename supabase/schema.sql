@@ -12,13 +12,17 @@ create table game (
   updated_at timestamptz not null default now());
 insert into game default values;
 
-create function set_phase(p text, s int, seconds int default 0) returns void
+-- Given from_phase and from_step, it moves only if the game is still there, so two remotes pressing Next
+-- at once move it one step, not two. Returns whether it moved.
+create function set_phase(p text, s int, seconds int default 0, from_phase text default null, from_step int default null)
+returns boolean
 language plpgsql security definer set search_path = public as $$
 begin
   if not is_host() then raise exception 'not host'; end if;
   update game set phase = p, step = s, updated_at = now(),
     deadline_at = case when seconds > 0 then now() + make_interval(secs => seconds) end
-  where id = 1;
+  where id = 1 and (from_phase is null or (phase = from_phase and step = from_step));
+  return found;
 end $$;
 
 -- +10 seconds on the remote. Adds to whatever is left, or restarts from now if time is up.
@@ -112,6 +116,23 @@ language sql stable security definer set search_path = public as $$
 create function answer_count() returns int
 language sql stable security definer set search_path = public as $$
   select count(*)::int from r2_answers $$;
+
+-- Writes all three rounds in one transaction. Two remotes can build at once: the lock on the game row
+-- makes the second wait, then find the rounds built and do nothing.
+create function build_rounds(r1 jsonb, r2 jsonb, r2_writers jsonb, r3 jsonb) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not is_host() then raise exception 'not host'; end if;
+  perform 1 from game where id = 1 for update;
+  if exists (select 1 from r3_items) then return; end if;
+  insert into r1_items (idx, text) select x.idx, x.text from jsonb_to_recordset(r1) as x(idx int, text text);
+  insert into r1_authors (idx, author_id) select x.idx, x.author_id from jsonb_to_recordset(r1) as x(idx int, author_id uuid);
+  insert into r2_matchups (idx, prompt, note, subject_id)
+    select x.idx, x.prompt, x.note, x.subject_id from jsonb_to_recordset(r2) as x(idx int, prompt text, note text, subject_id uuid);
+  insert into r2_assignments (matchup, slot, writer_id)
+    select x.matchup, x.slot, x.writer_id from jsonb_to_recordset(r2_writers) as x(matchup int, slot char(1), writer_id uuid);
+  insert into r3_items (idx, shade_id) select x.idx, x.shade_id from jsonb_to_recordset(r3) as x(idx int, shade_id uuid);
+end $$;
 
 -- Reset game on the remote: clears every game table, keeps hosts and the setup checklist.
 create function reset_game() returns void

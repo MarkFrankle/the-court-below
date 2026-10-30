@@ -31,6 +31,13 @@ export function revealTone(correct: number, guessers: number): 'most' | 'half' |
 }
 
 // The writers' votes are bets on the winner; everyone else's are votes.
+// A lone petition wins by default. Otherwise more votes wins, and a tie has no winner.
+export function petitionWinner(p: { hasA: boolean; hasB: boolean; votesA: number; votesB: number }): 'a' | 'b' | null {
+  if (p.hasA !== p.hasB) return p.hasA ? 'a' : 'b'
+  if (p.hasA && p.votesA !== p.votesB) return p.votesA > p.votesB ? 'a' : 'b'
+  return null
+}
+
 export function scoreRound2(p: { item: number; writerA: string; writerB: string; hasA: boolean; hasB: boolean; votes: Vote[]; voterIds: Set<string> }) {
   const has = { a: p.hasA, b: p.hasB }
   const votes = valid(p.votes, 2, p.item, p.voterIds).filter((v) => (v.choice === 'a' || v.choice === 'b') && has[v.choice])
@@ -39,9 +46,7 @@ export function scoreRound2(p: { item: number; writerA: string; writerB: string;
   const votesA = cast.filter((v) => v.choice === 'a').length
   const votesB = cast.length - votesA
 
-  let winner: 'a' | 'b' | null = null
-  if (p.hasA !== p.hasB) winner = p.hasA ? 'a' : 'b'
-  else if (p.hasA && votesA !== votesB) winner = votesA > votesB ? 'a' : 'b'
+  const winner = petitionWinner({ hasA: p.hasA, hasB: p.hasB, votesA, votesB })
 
   const awards: Award[] = []
   award(awards, p.writerA, votesA, 2, p.item, 'votes')

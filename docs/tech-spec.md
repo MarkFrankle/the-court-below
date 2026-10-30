@@ -52,10 +52,10 @@ The display and the controls are separate routes, because casting a Chrome tab m
 
 | Phase | Phone shows |
 | --- | --- |
-| `lobby` | Form (name, guise, portrait, three confessions), then "Your shade is recorded", a countdown to 23:00 and "Edit my shade" |
+| `lobby` | Form (name, guise, portrait, three confessions), then "Your shade is recorded", a countdown to 23:00 and "Edit my shade". An edit still open when the Court opens is dropped |
 | Any phase before `finale`, no shade yet | The same form with only name and portrait, under the late welcome line |
 | `r1_vote` | Grid of players, minus yourself, under the confession. The author sees the same grid titled "Frame a shade" |
-| `r2_write` | Your two prompts, one text box each, 80 characters max, saved on blur or Save |
+| `r2_write` | Your two prompts, one text box each, 80 characters max, saved on blur or Save, and once more at time-up. If that last save fails, the boxes stay so the guest can retry until Next |
 | `r2_vote` | Answers A and B as two large buttons. The two authors see the same buttons with a line saying their tap is a bet |
 | `r3_vote` | The shade's name, then Elysium, Asphodel, Tartarus, each with its description |
 | `finale`, `after` | Your portrait, realm and obol total. No score is shown on any phone before this |
@@ -63,12 +63,13 @@ The display and the controls are separate routes, because casting a Chrome tab m
 
 **TV screens:** Hall of Shades in `lobby` and `after` (one portrait at a time, 8-second crossfade, name and guise, a QR code of the site in a corner, realm labels in `after`), the opening (lines, the obol line, the Seeds toast), each round's intro, each item with a countdown and a "9 of 15 have judged" counter, reveals, the realm-by-realm reveal, the obol leaderboard and the Favored of Hades.
 
-**Host remote:** the phase in words, the countdown and the live counter, Next (labelled with where it goes), +10 seconds, the shade list with Hide (for duplicates), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades, and Reset game (with a confirmation).
+**Host remote:** the phase in words, the countdown and the live counter, Next (labelled with where it goes), +10 seconds, the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades, and Reset game (with a confirmation).
 
 ## Game phases
 
 One row, `game`, holds `phase`, `step` and `deadline_at`. Only the host remote changes it, through `set_phase()`. Every screen renders from it.
 The remote is the engine: Next calls `set_phase()` first, which closes any open vote, then does the new phase's entry work from fresh data. Entry work is idempotent, and the remote reruns it whenever it loads, so a reload or a dead phone mid-reveal is harmless.
+Two remotes are safe too. Next passes `set_phase()` the phase and step it saw, and the database refuses the move if the game has already left them, so two presses at once move one step. The rounds are written by `build_rounds()` in one transaction, which does nothing if they already exist.
 
 | Phase | `step` means | Timer | Entry work on the remote |
 | --- | --- | --- | --- |
@@ -110,7 +111,7 @@ The anon key ships in the bundle, so RLS is the security boundary. Input that mu
 | `obols` | Points ledger | Everyone | Host |
 
 - **The SQL** is `supabase/schema.sql`, pasted once into the SQL editor after `hosts.sql`. It holds the tables, RLS policies, functions, the Realtime publication, the `portraits` bucket and its storage policies, and `reset_game()`. Read it there rather than here, so the two never drift.
-- **Functions:** `set_phase(p, s, seconds)`, `add_time(seconds)` and `reset_game()` (host only); `server_now()`; `vote_count(round, item)` and `answer_count()`, which tell anyone how many, never who.
+- **Functions:** `set_phase(p, s, seconds, from_phase, from_step)`, `build_rounds(r1, r2, r2_writers, r3)`, `add_time(seconds)` and `reset_game()` (host only); `server_now()`; `vote_count(round, item)` and `answer_count()`, which tell anyone how many, never who.
 - **Guards:** a trigger stops guests setting `hidden`, `realm`, `test` or `late`, and marks a shade created after the lobby as late. `vote_open()` allows a vote while its item is up plus 3 seconds of grace.
 - **Test shades:** `shades.id` and `votes.voter_id` have no foreign key to `auth.users`, so the remote can create test shades and vote for them.
 - **Checks:** `tests/db/rls.test.ts` runs every rule against a local Postgres (PGlite) on each `npm test`; `supabase/game_rls_checks.md` repeats them by hand against the live project.
@@ -119,7 +120,7 @@ The anon key ships in the bundle, so RLS is the security boundary. Input that mu
 
 Every client keeps one Supabase channel open and renders from one load of the game, refetched in full whenever it might have missed something. Phones lock their screens constantly at a party, so recovery is the normal path, not an edge case.
 
-- **Subscriptions.** Everyone subscribes to `game`, `shades`, `r1_items`, `r2_matchups`, `r3_items` and `obols`. Any change triggers a debounced full refetch (`src/lib/useGame.ts`). RLS filters what each client receives.
+- **Subscriptions.** Everyone subscribes to `game`, `shades`, `r1_items`, `r2_matchups`, `r3_items` and `obols`. Any change triggers a debounced full refetch (`src/lib/useGame.ts`). Only the newest refetch may update the screen, so a slow older one can't roll it back. RLS filters what each client receives.
 - **Recovery.** Refetch on `visibilitychange` to visible, on `SUBSCRIBED`, when Realtime reports database changes flowing (a moment after `SUBSCRIBED`; see `agent_docs/local-supabase.md`), and every 30 s (every 5 s on the remote, which also lists confessions and answers that aren't in the publication).
 - **Timers.** Deadlines are set by the database (`set_phase` uses `now()`), never by a device clock. Each client calls `server_now()` once to get its clock offset and counts down against `deadline_at`.
 - **Votes.** One `upsert` per tap, so changing your mind before the timer ends is allowed. The phone shows its own vote read back from the database.
@@ -160,7 +161,7 @@ All round building and scoring lives in pure functions in `src/lib/` (`rounds.ts
 
 - **Round 1 voting.** The author's vote is stored like any other but read as their frame pick.
 - **Invalid votes.** Tallies ignore votes from anyone who isn't a voter, and any choice that isn't another player's id (Round 1), `a`/`b` for an answer that exists (Round 2), or a realm (Round 3).
-- **Round 2 edge cases.** A missing or hidden answer shows as "The Court received no petition", and the other writer wins by default without the bonus. A tied vote gives no bet points.
+- **Round 2 edge cases.** A missing or hidden answer shows as "The Court received no petition", and the other writer wins by default without the bonus. The TV highlights the same winner (`petitionWinner()`). A tied vote gives no bet points.
 - **Round 3.** Majority realm wins. A tie, or no votes, sends the shade to Asphodel. Persephone can overrule out loud.
 - **Favored of Hades.** Highest obol total. A tie is announced as joint favorites.
 - **Hidden scores.** `obols` is readable for simplicity, but no phone or TV screen shows totals before `finale`.
@@ -270,7 +271,7 @@ The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerati
 | --- | --- | --- |
 | Phone locks or drops Wi-Fi | Misses updates | Refetch on resume; mobile data works too |
 | Too many sign-ins from the Wi-Fi | New phones can't join | Raise the rate limit beforehand; phones suggest mobile data |
-| Guest opens the QR in another browser | New anonymous user, duplicate shade | Host hides the duplicate on the remote |
+| Guest opens the QR in another browser | New anonymous user, duplicate shade | Host hides the duplicate on the remote, before Next in the lobby. After that a duplicate made in the lobby stays in the Trial: hiding it would break the rounds already built |
 | Guest misses a vote | No vote | Counters and scoring only count votes cast |
 | Cast tab freezes or closes | TV stalls | Recast or reopen `/tv`; it needs no sign-in and renders from `game` |
 | Laptop dies | No TV | Open `/tv` on any device |

@@ -47,7 +47,8 @@ function Guest(props: { userId: string }) {
 
   if (me && closed) return <Shell><Verdict data={data} userId={props.userId} /></Shell>
 
-  if ((!me || editing) && !closed) {
+  // Editing is for the lobby only: once the Court opens, an open edit form gives way to the game.
+  if ((!me || (editing && phase === 'lobby')) && !closed) {
     return (
       <Shell>
         <ArrivalForm

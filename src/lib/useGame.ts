@@ -13,12 +13,18 @@ export function useGame(role: Role, userId: string | null) {
   const [data, setData] = useState<api.GameData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const timer = useRef<number | undefined>(undefined)
+  const latest = useRef(0)
 
+  // Loads can overlap on slow Wi-Fi. Only the newest one may set state, so an older one finishing last can't roll the screen back.
   const load = useCallback(async () => {
+    const n = ++latest.current
     try {
-      setData(await api.fetchAll({ userId, host: role === 'host' }))
+      const d = await api.fetchAll({ userId, host: role === 'host' })
+      if (n !== latest.current) return
+      setData(d)
       setError(null)
     } catch (e) {
+      if (n !== latest.current) return
       setError(e instanceof Error ? e.message : String(e))
     }
   }, [role, userId])

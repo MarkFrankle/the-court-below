@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import type { Vote } from '../../src/lib/game'
-import { favored, judge, realmsRevealed, revealTone, scoreRound1, scoreRound2, totals } from '../../src/lib/scoring'
+import { favored, judge, petitionWinner, realmsRevealed, revealTone, scoreRound1, scoreRound2, totals } from '../../src/lib/scoring'
 
 const v = (voterId: string, round: 1 | 2 | 3, item: number, choice: string): Vote => ({ voterId, round, item, choice })
 const ids = (...xs: string[]) => new Set(xs)
@@ -73,6 +73,14 @@ test('round 2: a missing answer loses by default, without the bonus for the othe
   const r = r2([v('cal', 2, 0, 'a'), v('dev', 2, 0, 'b'), v('eve', 2, 0, 'b'), v('fay', 2, 0, 'b')], false, true)
   expect([r.votesA, r.votesB, r.winner]).toEqual([0, 3, 'b'])
   expect(r.awards).toEqual([{ shadeId: 'ben', amount: 3, round: 2, item: 0, reason: 'votes' }])
+})
+
+test('round 2: the winner the TV shows is the one scoring pays', () => {
+  expect(petitionWinner({ hasA: true, hasB: false, votesA: 0, votesB: 0 })).toBe('a')
+  expect(petitionWinner({ hasA: false, hasB: true, votesA: 0, votesB: 0 })).toBe('b')
+  expect(petitionWinner({ hasA: true, hasB: true, votesA: 2, votesB: 2 })).toBeNull()
+  expect(petitionWinner({ hasA: true, hasB: true, votesA: 1, votesB: 3 })).toBe('b')
+  expect(petitionWinner({ hasA: false, hasB: false, votesA: 0, votesB: 0 })).toBeNull()
 })
 
 test('round 3: the majority realm wins; ties and silence go to Asphodel', () => {

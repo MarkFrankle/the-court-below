@@ -116,3 +116,25 @@ test('round 3 bargains are public only once copied in by a host', async () => {
   await as(db, HOST, `update r3_items set opened = true, bargain = 'bargain' where idx = 0`)
   expect(await as(db, BEN, `select bargain from r3_items`)).toEqual([{ bargain: 'bargain' }])
 })
+
+test('set_phase moves only from the phase the remote saw, so a double Next moves one step', async () => {
+  await as(db, HOST, `select set_phase('intro', 0)`)
+  expect(await as(db, HOST, `select set_phase('intro', 1, 0, 'intro', 0) as moved`)).toEqual([{ moved: true }])
+  expect(await as(db, HOST, `select set_phase('intro', 1, 0, 'intro', 0) as moved`)).toEqual([{ moved: false }])
+  expect(await one(`select phase, step from game`)).toEqual({ phase: 'intro', step: 1 })
+})
+
+const rounds = `select build_rounds(
+  '[{"idx": 0, "text": "sin", "author_id": "${ANA}"}]',
+  '[{"idx": 0, "prompt": "p", "note": null, "subject_id": null}]',
+  '[{"matchup": 0, "slot": "a", "writer_id": "${ANA}"}, {"matchup": 0, "slot": "b", "writer_id": "${BEN}"}]',
+  '[{"idx": 0, "shade_id": "${ANA}"}, {"idx": 1, "shade_id": "${BEN}"}]')`
+
+test('build_rounds is host only, and a second build leaves the first alone', async () => {
+  await expect(as(db, ANA, rounds)).rejects.toThrow(/not host/)
+  await as(db, HOST, rounds)
+  await as(db, HOST, rounds.replace('"text": "sin"', '"text": "other"').replace(`"author_id": "${ANA}"`, `"author_id": "${BEN}"`))
+  expect(await as(db, HOST, `select i.text, a.author_id from r1_items i join r1_authors a using (idx)`)).toEqual([{ text: 'sin', author_id: ANA }])
+  expect(await one(`select count(*)::int as n from r2_assignments`)).toEqual({ n: 2 })
+  expect(await one(`select count(*)::int as n from r3_items`)).toEqual({ n: 2 })
+})

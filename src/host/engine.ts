@@ -17,6 +17,7 @@ function check(res: { error: { message: string } | null }) {
 }
 
 // One engine call at a time, so a Next pressed during the on-load rerun can't race it.
+// That only covers this tab: a second remote is held off by set_phase and build_rounds in the database.
 let queue: Promise<unknown> = Promise.resolve()
 function serial(fn: () => Promise<void>): Promise<void> {
   const run = queue.then(fn)
@@ -28,7 +29,8 @@ export const advance = () => serial(async () => {
   const d = await fresh()
   const next = nextStep(d.game, { r1: d.r1.length, r2: d.r2.length, r3: d.r3.length })
   if (!next) return
-  await api.setPhase(next.phase, next.step, next.seconds)
+  // False if another remote moved the game first: this press is then a no-op.
+  if (!(await api.setPhase(next.phase, next.step, next.seconds, d.game))) return
   await doEntry()
 })
 
@@ -80,27 +82,19 @@ async function revealRound1(d: api.GameData, idx: number) {
 }
 
 // Builds all three rounds from the shades in the room when the Court opens.
+// build_rounds writes them in one transaction, and does nothing if another remote got there first.
 async function buildRounds(d: api.GameData) {
   const host = d.host!
   const ps = players(d.shades)
   const r1 = buildRound1(ps, host.confessions, host.hidden, Math.random)
   const r2 = buildRound2(ps, PROMPTS, Math.random)
   const r3 = buildRound3(ps, Math.random)
-
-  // Clear anything a half-finished build left behind. r3_items goes last, so it marks a complete build.
-  check(await supabase.from('r1_items').delete().gte('idx', 0))
-  check(await supabase.from('r2_assignments').delete().gte('matchup', 0))
-  check(await supabase.from('r2_matchups').delete().gte('idx', 0))
-
-  if (r1.length > 0) {
-    check(await supabase.from('r1_items').insert(r1.map((i) => ({ idx: i.idx, text: i.text }))))
-    check(await supabase.from('r1_authors').insert(r1.map((i) => ({ idx: i.idx, author_id: i.authorId }))))
-  }
-  if (r2.matchups.length > 0) {
-    check(await supabase.from('r2_matchups').insert(r2.matchups.map((m) => ({ idx: m.idx, prompt: m.prompt, note: m.note, subject_id: m.subjectId }))))
-    check(await supabase.from('r2_assignments').insert(r2.assignments.map((a) => ({ matchup: a.matchup, slot: a.slot, writer_id: a.writerId }))))
-  }
-  if (r3.length > 0) check(await supabase.from('r3_items').insert(r3.map((shadeId, idx) => ({ idx, shade_id: shadeId }))))
+  check(await supabase.rpc('build_rounds', {
+    r1: r1.map((i) => ({ idx: i.idx, text: i.text, author_id: i.authorId })),
+    r2: r2.matchups.map((m) => ({ idx: m.idx, prompt: m.prompt, note: m.note, subject_id: m.subjectId })),
+    r2_writers: r2.assignments.map((a) => ({ matchup: a.matchup, slot: a.slot, writer_id: a.writerId })),
+    r3: r3.map((shadeId, idx) => ({ idx, shade_id: shadeId })),
+  }))
 }
 
 // The bargain goes public only when its shade is up, and never if a host hid it.

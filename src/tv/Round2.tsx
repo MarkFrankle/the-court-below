@@ -1,5 +1,6 @@
 import { round2 } from '../content/copy'
 import type { GameData } from '../lib/api'
+import { petitionWinner } from '../lib/scoring'
 import { Portrait } from '../ui/Portrait'
 import { Speech } from '../ui/Speech'
 import { Clock } from './Clock'
@@ -31,7 +32,7 @@ export function Round2(props: { data: GameData }) {
   // The reveal waits until the remote has written the split.
   const revealed = phase === 'r2_reveal' && m.votesA !== null
   const writer = (id: string | null) => (id ? props.data.shades.find((s) => s.id === id) : undefined)
-  const winner = !revealed ? null : m.votesA! > m.votesB! ? 'a' : m.votesB! > m.votesA! ? 'b' : null
+  const winner = revealed ? petitionWinner({ hasA: m.answerA !== null, hasB: m.answerB !== null, votesA: m.votesA!, votesB: m.votesB! }) : null
 
   return (
     <section className="tv-stage tv-petition" key={`petition-${step}`}>

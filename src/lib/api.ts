@@ -61,8 +61,9 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut()
 }
 
-export async function setPhase(phase: Phase, step: number, seconds: number): Promise<void> {
-  check(await supabase.rpc('set_phase', { p: phase, s: step, seconds }))
+// Moves only if the game is still at `from`, and says whether it moved.
+export async function setPhase(phase: Phase, step: number, seconds: number, from: { phase: Phase; step: number }): Promise<boolean> {
+  return check(await supabase.rpc('set_phase', { p: phase, s: step, seconds, from_phase: from.phase, from_step: from.step })) as boolean
 }
 
 export async function addTime(seconds: number): Promise<void> {

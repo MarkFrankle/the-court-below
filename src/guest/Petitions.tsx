@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { screens } from '../content/copy'
 import * as api from '../lib/api'
 import { useCountdown } from '../lib/clock'
@@ -13,10 +13,6 @@ export function Petitions(props: { data: api.GameData; onSaved: () => void }) {
   const saved = new Map((data.mine?.answers ?? []).map((a) => [a.matchup, a.text]))
   const [drafts, setDrafts] = useState<Record<number, string>>(() => Object.fromEntries(mine.map((a) => [a.matchup, saved.get(a.matchup) ?? ''])))
   const [error, setError] = useState<string | null>(null)
-  const [closed, setClosed] = useState(false)
-
-  if (mine.length === 0) return <p className="guest-look display">{screens.lookToTheCourt}</p>
-  if (left === 0 || closed) return <p className="guest-look display">{screens.heardEnough}</p>
 
   async function save(matchup: number) {
     const text = (drafts[matchup] ?? '').trim()
@@ -25,13 +21,22 @@ export function Petitions(props: { data: api.GameData; onSaved: () => void }) {
     try {
       await api.saveAnswer(matchup, text)
     } catch {
-      // Refused once writing has closed; otherwise most likely the connection.
-      if (left !== null && left <= 3) setClosed(true)
-      else setError("That petition didn't reach the Court. Check your connection and try again.")
+      // Writing stays open until the host moves on (which unmounts this), so a failure here is the connection.
+      setError("That petition didn't reach the Court. Check your connection and try again.")
     } finally {
       props.onSaved()
     }
   }
+
+  // At time-up the boxes give way to "heard enough", and unmounting fires no blur, so save whatever is still unsaved.
+  const timeUp = left === 0
+  useEffect(() => {
+    if (timeUp) for (const { matchup } of mine) save(matchup)
+  }, [timeUp])
+
+  if (mine.length === 0) return <p className="guest-look display">{screens.lookToTheCourt}</p>
+  // A failed save keeps the boxes up so the guest can retry.
+  if (timeUp && !error) return <p className="guest-look display">{screens.heardEnough}</p>
 
   return (
     <section className="vote">
