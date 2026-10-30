@@ -122,9 +122,10 @@
   color: var(--gold);
 }
 
+/* Bottom left: Netlify's free-plan badge covers the bottom right corner. */
 .hall-qr {
   position: absolute;
-  right: 3vw;
+  left: 3vw;
   bottom: 4vh;
   padding: 0.5rem;
   border-radius: 0.5rem;
