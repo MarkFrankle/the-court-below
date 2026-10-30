@@ -91,3 +91,11 @@ test('builders are deterministic for a seed', () => {
   const ps = many(10)
   expect(buildRound3(ps, seeded(8))).toEqual(buildRound3(ps, seeded(8)))
 })
+
+import { uuid } from '../../src/lib/random'
+
+test('uuid makes distinct v4 ids', () => {
+  const a = uuid()
+  expect(a).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)
+  expect(uuid()).not.toBe(a)
+})

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from './supabase'
 import * as api from './api'
+import { uuid } from './random'
 
 export type Role = 'guest' | 'tv' | 'host'
 
@@ -30,10 +31,15 @@ export function useGame(role: Role, userId: string | null) {
   useEffect(() => {
     load()
     // A fresh topic each run: supabase.channel() hands back a channel that is still leaving, which never resubscribes.
-    const channel = supabase.channel(`game-${crypto.randomUUID()}`)
+    const channel = supabase.channel(`game-${uuid()}`)
     for (const table of ['game', 'shades', 'r1_items', 'r2_matchups', 'r3_items', 'obols']) {
       channel.on('postgres_changes', { event: '*', schema: 'public', table }, refresh)
     }
+    // SUBSCRIBED arrives before database changes start flowing; the 'system' message says when they do.
+    // Refetch at both, so a change in the gap between them isn't missed.
+    channel.on('system', {}, (p: { extension?: string; status?: string }) => {
+      if (p.extension === 'postgres_changes' && p.status === 'ok') refresh()
+    })
     channel.subscribe((status) => {
       if (status === 'SUBSCRIBED') refresh()
     })

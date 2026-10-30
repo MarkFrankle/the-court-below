@@ -1,4 +1,5 @@
 import type { GameData } from '../lib/api'
+import { uuid } from '../lib/random'
 import { players } from '../lib/rounds'
 import { supabase } from '../lib/supabase'
 
@@ -21,7 +22,7 @@ const TEST_SHADES: { name: string; guise: string; sin: string; talent: string; b
 ]
 
 export async function seedTestShades(n: number): Promise<void> {
-  const picked = TEST_SHADES.slice(0, n).map((s) => ({ ...s, id: crypto.randomUUID() }))
+  const picked = TEST_SHADES.slice(0, n).map((s) => ({ ...s, id: uuid() }))
   const shades = await supabase.from('shades').insert(picked.map((s) => ({ id: s.id, name: s.name, guise: s.guise, test: true })))
   if (shades.error) throw new Error(shades.error.message)
   const confessions = await supabase.from('confessions').insert(picked.map((s) => ({ shade_id: s.id, sin: s.sin, talent: s.talent, bargain: s.bargain })))

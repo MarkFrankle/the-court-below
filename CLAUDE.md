@@ -10,6 +10,7 @@ The docs are the source of truth. Read the relevant one before changing anything
 - `docs/game-plan.md`: The Trial of the Shades, arrival form, three rounds, every on-screen line.
 - `docs/tech-spec.md`: architecture, schema and RLS, game phases, scoring, `/setup` page, deploy, test checklist.
 - `docs/setup-plan.md`: room checklists, shopping list, Saturday countdown. Seed content for `/setup`.
+- `agent_docs/local-supabase.md`: a local Supabase in Docker, the end-to-end game test, and a Realtime gotcha.
 
 If code and docs disagree, ask which one is right, then update the docs.
 
