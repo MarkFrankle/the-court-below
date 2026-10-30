@@ -97,3 +97,25 @@
   justify-self: start;
   margin-top: 2rem;
 }
+
+.host-items {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.host-items li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.host-items li.is-hidden {
+  opacity: 0.45;
+  text-decoration: line-through;
+}

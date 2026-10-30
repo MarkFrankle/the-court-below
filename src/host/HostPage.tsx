@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase'
 import { Portrait } from '../ui/Portrait'
 import { describe } from './describe'
 import { advance, enter } from './engine'
+import { Moderation } from './Moderation'
 import { autoVote, seedTestShades } from './rehearsal'
 import '../ui/game.css'
 import './host.css'
@@ -120,6 +121,8 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
         <button className="button ghost" disabled={busy} onClick={() => run(() => api.addTime(10))}>+10 seconds</button>
       )}
       {(error ?? loadError) && <p className="error">{error ?? loadError}</p>}
+
+      <Moderation data={data} busy={busy} run={run} />
 
       <section className="host-section">
         <h2 className="display">Shades</h2>

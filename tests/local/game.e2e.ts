@@ -79,6 +79,10 @@ test('the host seeds test shades and opens the court', async () => {
   let d = await api.fetchAll({ userId: null, host: true })
   expect(d.shades).toHaveLength(16)
   expect(d.host!.confessions).toHaveLength(16)
+  // Moderation: hide all three of Medusa's confessions before the Court opens.
+  const medusa = d.shades.find((s) => s.name === 'Medusa')!
+  ok(await supabase.from('hidden_items').insert(['sin', 'talent', 'bargain'].map((f) => ({ kind: 'confession', ref: `${medusa.id}:${f}` }))))
+  const medusaLines = Object.values(d.host!.confessions.find((c) => c.shadeId === medusa.id)!)
 
   // A guest's realtime subscription hears the phase change.
   const heard = new Promise<string>((resolve) => {
@@ -94,6 +98,7 @@ test('the host seeds test shades and opens the court', async () => {
 
   d = await api.fetchAll({ userId: null, host: true })
   expect(d.r1).toHaveLength(8)
+  expect(d.r1.some((i) => medusaLines.includes(i.text))).toBe(false)
   expect(d.r1.every((i) => i.authorId === null)).toBe(true)
   expect(d.host!.r1Authors).toHaveLength(8)
   expect(d.r2).toHaveLength(16)
@@ -225,7 +230,10 @@ test('round 3 judges every player and reveals realm by realm', async () => {
     expect(d.game).toMatchObject({ phase: 'r3_vote', step: i })
     // The bargain goes public only for the shade that's up.
     expect(d.r3[i].opened).toBe(true)
-    expect(d.r3[i].bargain).toBeTruthy()
+    // Medusa's hidden bargain never goes public.
+    const isMedusa = d.shades.find((s) => s.id === d.r3[i].shadeId)?.name === 'Medusa'
+    if (isMedusa) expect(d.r3[i].bargain).toBeNull()
+    else expect(d.r3[i].bargain).toBeTruthy()
     if (i + 1 < d.r3.length) expect(d.r3[i + 1].bargain).toBeNull()
     // The real guests send everyone to Tartarus.
     for (const g of guests.slice(1)) ok(await g.client.from('votes').upsert({ voter_id: g.id, round: 3, item: i, choice: 'tartarus' }, { onConflict: 'voter_id,round,item' }))
