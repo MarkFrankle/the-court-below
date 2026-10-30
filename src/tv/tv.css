@@ -122,3 +122,58 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Rounds */
+.tv-round {
+  margin: 0;
+  font: 600 0.6em var(--font-body);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.tv-confession {
+  max-width: 30ch;
+  font-size: 1.9em !important;
+}
+
+.tv-clock {
+  display: grid;
+  justify-items: center;
+  gap: 1vh;
+}
+
+.tv-seconds {
+  margin: 0;
+  font-size: 3em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tv-heard {
+  margin: 0;
+  font-size: 1.6em;
+}
+
+.tv-count {
+  margin: 0;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tv-reveal {
+  gap: 2.5vh;
+}
+
+.tv-reveal .tv-confession {
+  font-size: 1.2em !important;
+  opacity: 0.8;
+}
+
+.tv-name {
+  margin: 0;
+  font-size: 2.2em;
+}
+
+.tv-verdict {
+  color: var(--gold-soft) !important;
+}

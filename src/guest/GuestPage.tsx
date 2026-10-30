@@ -3,6 +3,7 @@ import { arrival, screens, TRIAL_STARTS_AT } from '../content/copy'
 import * as api from '../lib/api'
 import { useGame } from '../lib/useGame'
 import { ArrivalForm } from './ArrivalForm'
+import { PickShade } from './PickShade'
 import '../ui/game.css'
 import './guest.css'
 
@@ -64,7 +65,11 @@ function Guest(props: { userId: string }) {
     )
   }
 
-  // The controller screens for each round land here in later tasks.
+  // Keyed by step, so each item starts fresh.
+  if (me && phase === 'r1_vote') {
+    return <Shell><PickShade key={`r1-${data.game.step}`} data={data} userId={props.userId} onVoted={refresh} /></Shell>
+  }
+
   return (
     <Shell>
       <p className="guest-look display">{screens.lookToTheCourt}</p>

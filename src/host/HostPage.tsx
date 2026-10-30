@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase'
 import { Portrait } from '../ui/Portrait'
 import { describe } from './describe'
 import { advance, enter } from './engine'
-import { seedTestShades } from './rehearsal'
+import { autoVote, seedTestShades } from './rehearsal'
 import '../ui/game.css'
 import './host.css'
 
@@ -152,6 +152,9 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
       <section className="host-section">
         <h2 className="display">Rehearsal</h2>
         <div className="host-row">
+          {hasTest && ['r1_vote', 'r2_write', 'r2_vote', 'r3_vote'].includes(game.phase) && (
+            <button className="button ghost" disabled={busy} onClick={() => run(() => autoVote(data))}>Auto-vote for test shades</button>
+          )}
           {game.phase === 'lobby' && !hasTest && (
             <button className="button ghost" disabled={busy} onClick={() => run(() => seedTestShades(12))}>Seed 12 test shades</button>
           )}

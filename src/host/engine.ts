@@ -1,7 +1,9 @@
 import { PROMPTS } from '../content/prompts'
 import * as api from '../lib/api'
 import { nextStep } from '../lib/phases'
-import { buildRound1, buildRound2, buildRound3, players } from '../lib/rounds'
+import { buildRound1, buildRound2, buildRound3, players, voters } from '../lib/rounds'
+import { scoreRound1 } from '../lib/scoring'
+import type { Award } from '../lib/game'
 import { supabase } from '../lib/supabase'
 
 // The game engine runs on the host remote. Next changes the phase first (which closes any open vote),
@@ -38,7 +40,31 @@ async function doEntry(): Promise<void> {
     case 'intro':
       if (d.r3.length === 0) await buildRounds(d)
       break
+    case 'r1_reveal':
+      if (d.r1[d.game.step] && !d.r1[d.game.step].authorId) await revealRound1(d, d.game.step)
+      break
   }
+}
+
+// The unique key on (shade, round, item, reason) makes a rerun overwrite rather than add.
+async function writeObols(awards: Award[]) {
+  if (awards.length === 0) return
+  check(await supabase.from('obols').upsert(
+    awards.map((a) => ({ shade_id: a.shadeId, amount: a.amount, round: a.round, item: a.item, reason: a.reason })),
+    { onConflict: 'shade_id,round,item,reason' },
+  ))
+}
+
+// Obols first, then the author: once author_id is public the reveal is done.
+async function revealRound1(d: api.GameData, idx: number) {
+  const authorId = d.host!.r1Authors.find((a) => a.idx === idx)?.authorId
+  if (!authorId) throw new Error(`Round 1 item ${idx} has no author.`)
+  const result = scoreRound1({
+    item: idx, authorId, votes: await api.votesFor(1, idx),
+    playerIds: new Set(players(d.shades).map((s) => s.id)), voterIds: voters(d.shades),
+  })
+  await writeObols(result.awards)
+  check(await supabase.from('r1_items').update({ author_id: authorId, correct: result.correct, guessers: result.guessers }).eq('idx', idx))
 }
 
 // Builds all three rounds from the shades in the room when the Court opens.

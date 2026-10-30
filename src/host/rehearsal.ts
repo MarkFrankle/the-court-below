@@ -1,3 +1,5 @@
+import type { GameData } from '../lib/api'
+import { players } from '../lib/rounds'
 import { supabase } from '../lib/supabase'
 
 // Rehearsal helpers on the remote: test shades let two or three real phones run a full game.
@@ -24,4 +26,20 @@ export async function seedTestShades(n: number): Promise<void> {
   if (shades.error) throw new Error(shades.error.message)
   const confessions = await supabase.from('confessions').insert(picked.map((s) => ({ shade_id: s.id, sin: s.sin, talent: s.talent, bargain: s.bargain })))
   if (confessions.error) throw new Error(confessions.error.message)
+}
+
+const pick = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)]
+
+// Casts a random vote for every test shade on the item that's up.
+export async function autoVote(d: GameData): Promise<void> {
+  const { phase, step } = d.game
+  const testers = d.shades.filter((s) => s.test && !s.hidden)
+  const rows: { voter_id: string; round: number; item: number; choice: string }[] = []
+  if (phase === 'r1_vote') {
+    const ids = players(d.shades).map((s) => s.id)
+    for (const t of testers) rows.push({ voter_id: t.id, round: 1, item: step, choice: pick(ids.filter((id) => id !== t.id)) })
+  }
+  if (rows.length === 0) return
+  const res = await supabase.from('votes').upsert(rows, { onConflict: 'voter_id,round,item' })
+  if (res.error) throw new Error(res.error.message)
 }

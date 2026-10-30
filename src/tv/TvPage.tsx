@@ -4,6 +4,7 @@ import * as api from '../lib/api'
 import { useGame } from '../lib/useGame'
 import { Speech } from '../ui/Speech'
 import { Hall } from './Hall'
+import { Round1 } from './Round1'
 import '../ui/game.css'
 import './tv.css'
 
@@ -28,7 +29,8 @@ function Tv() {
     <main className="court tv">
       {(phase === 'lobby' || phase === 'after') && <Hall shades={data.shades} showRealms={phase === 'after'} />}
       {phase === 'intro' && <Intro step={step} />}
-      {phase !== 'lobby' && phase !== 'after' && phase !== 'intro' && (
+      {phase.startsWith('r1_') && <Round1 data={data} />}
+      {/^(r2_|r3_|finale)/.test(phase) && (
         <section className="tv-stage">
           <h1 className="display tv-title">The Court Below</h1>
         </section>
