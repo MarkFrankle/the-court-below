@@ -8,7 +8,8 @@
 
 .tv-stage {
   display: grid;
-  place-content: center;
+  /* safe: if a screen is ever too tall, it overflows at the bottom rather than cutting off its title. */
+  place-content: safe center;
   justify-items: center;
   gap: 4vh;
   height: 100%;
@@ -316,17 +317,33 @@
 
 .tv-rules {
   display: grid;
-  gap: 1.5vh;
-  max-width: 44ch;
-  margin: 0;
-  padding-left: 1.4em;
-  text-align: left;
-  font-size: 0.95em;
-  line-height: 1.4;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3vw;
+  width: min(84vw, 80rem);
+  margin: 1vh 0;
+  padding: 0;
+  list-style: none;
 }
 
-.tv-rules li::marker {
-  color: var(--gold);
-  font-family: var(--font-display);
-  font-weight: 600;
+.tv-rules li {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 1.5vh;
+  padding-top: 2.5vh;
+  border-top: 1px solid rgb(201 164 92 / 0.35);
+}
+
+.tv-rule-number {
+  font-size: 2.4em;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+
+.tv-rules p {
+  margin: 0;
+  max-width: 26ch;
+  text-wrap: balance;
+  font-size: 0.8em;
+  line-height: 1.45;
 }

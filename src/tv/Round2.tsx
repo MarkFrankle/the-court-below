@@ -14,7 +14,12 @@ export function Round2(props: { data: GameData }) {
         <p className="tv-round">Round 2</p>
         <h1 className="display tv-title">{round2.title}</h1>
         <ol className="tv-rules">
-          {round2.rules.map((r) => <li key={r}>{r}</li>)}
+          {round2.rules.map((r, i) => (
+            <li key={r}>
+              <span className="tv-rule-number display">{i + 1}</span>
+              <p>{r}</p>
+            </li>
+          ))}
         </ol>
         <Speech line={round2.intro} />
       </section>
