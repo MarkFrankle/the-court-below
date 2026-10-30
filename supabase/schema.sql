@@ -90,8 +90,9 @@ create table r2_matchups (idx int primary key, prompt text not null, note text, 
   opened boolean not null default false, answer_a text, answer_b text,
   writer_a uuid, writer_b uuid, votes_a int, votes_b int);
 
--- Round 3
-create table r3_items (idx int primary key, shade_id uuid not null references shades on delete cascade);
+-- Round 3. The bargain is copied in from the private confession when that shade's judgment opens.
+create table r3_items (idx int primary key, shade_id uuid not null references shades on delete cascade,
+  opened boolean not null default false, bargain text);
 
 -- Votes: one per voter per item. No foreign key, so the remote can vote for test shades.
 create table votes (voter_id uuid default auth.uid(), round smallint check (round in (1, 2, 3)), item int,

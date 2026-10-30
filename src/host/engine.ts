@@ -2,8 +2,8 @@ import { PROMPTS } from '../content/prompts'
 import * as api from '../lib/api'
 import { nextStep } from '../lib/phases'
 import { buildRound1, buildRound2, buildRound3, players, voters } from '../lib/rounds'
-import { scoreRound1 } from '../lib/scoring'
-import type { Award } from '../lib/game'
+import { judge, realmsRevealed, scoreRound1 } from '../lib/scoring'
+import { confessionRef, REALMS, type Award } from '../lib/game'
 import { supabase } from '../lib/supabase'
 
 // The game engine runs on the host remote. Next changes the phase first (which closes any open vote),
@@ -42,6 +42,12 @@ async function doEntry(): Promise<void> {
       break
     case 'r1_reveal':
       if (d.r1[d.game.step] && !d.r1[d.game.step].authorId) await revealRound1(d, d.game.step)
+      break
+    case 'r3_vote':
+      if (d.r3[d.game.step] && !d.r3[d.game.step].opened) await openJudgment(d, d.game.step)
+      break
+    case 'r3_reveal':
+      await revealRealms(d, d.game.step)
       break
   }
 }
@@ -89,4 +95,23 @@ async function buildRounds(d: api.GameData) {
     check(await supabase.from('r2_assignments').insert(r2.assignments.map((a) => ({ matchup: a.matchup, slot: a.slot, writer_id: a.writerId }))))
   }
   if (r3.length > 0) check(await supabase.from('r3_items').insert(r3.map((shadeId, idx) => ({ idx, shade_id: shadeId }))))
+}
+
+// The bargain goes public only when its shade is up, and never if a host hid it.
+async function openJudgment(d: api.GameData, idx: number) {
+  const { shadeId } = d.r3[idx]
+  const c = d.host!.confessions.find((x) => x.shadeId === shadeId)
+  const bargain = c?.bargain?.trim() && !d.host!.hidden.has(confessionRef(shadeId, 'bargain')) ? c.bargain.trim() : null
+  check(await supabase.from('r3_items').update({ opened: true, bargain }).eq('idx', idx))
+}
+
+// Realm by realm: each step writes only the realms revealed so far, so phones can't see the rest early.
+async function revealRealms(d: api.GameData, step: number) {
+  const votes = await api.votesForRound(3)
+  const voterIds = voters(d.shades)
+  const shown = new Set(realmsRevealed(step))
+  for (const realm of REALMS.filter((r) => shown.has(r))) {
+    const ids = d.r3.filter((item) => judge({ item: item.idx, votes, voterIds }) === realm).map((item) => item.shadeId)
+    if (ids.length > 0) check(await supabase.from('shades').update({ realm }).in('id', ids))
+  }
 }

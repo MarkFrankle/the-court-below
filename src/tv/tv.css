@@ -177,3 +177,96 @@
 .tv-verdict {
   color: var(--gold-soft) !important;
 }
+
+/* Round 3 */
+.tv-realms {
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+  gap: 4vw;
+  font-size: 0.8em;
+}
+
+.tv-realm h2 {
+  margin: 0 0 0.5em;
+  font-size: 2.2em;
+}
+
+.tv-realm p {
+  margin: 0;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.tv-judged {
+  gap: 2vh;
+}
+
+.tv-bargain p {
+  margin: 0.2em 0;
+}
+
+.tv-verdict-stage {
+  align-content: start;
+  padding-top: 8vh;
+}
+
+.tv-souls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3vh 3vw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tv-souls li {
+  display: grid;
+  justify-items: center;
+  gap: 0.4em;
+  font-size: 0.8em;
+  animation: tv-fade 1.5s ease both;
+}
+
+.tv-souls .portrait-md {
+  width: 9vw;
+}
+
+/* Finale */
+.tv-leaderboard ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2vh 4vw;
+  width: min(80vw, 70rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75em;
+}
+
+.tv-leaderboard li {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 1em;
+  text-align: left;
+}
+
+.tv-lb-score {
+  font: 600 1.4em var(--font-display);
+  color: var(--gold-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.tv-favored {
+  display: flex;
+  gap: 3vw;
+}
+
+.tv-favored figure {
+  margin: 0;
+}
+
+.tv-finale {
+  gap: 3vh;
+}

@@ -108,3 +108,11 @@ test('guests upload only their own portrait', async () => {
   await as(db, ANA, `insert into storage.objects (bucket_id, name) values ('portraits', '${ANA}.jpg')`)
   await expect(as(db, ANA, `insert into storage.objects (bucket_id, name) values ('portraits', '${BEN}.jpg')`)).rejects.toThrow(/row-level security/)
 })
+
+test('round 3 bargains are public only once copied in by a host', async () => {
+  await as(db, HOST, `insert into r3_items (idx, shade_id) values (0, '${ANA}')`)
+  expect(await as(db, BEN, `select bargain from r3_items`)).toEqual([{ bargain: null }])
+  expect(await as(db, BEN, `update r3_items set bargain = 'forged' returning bargain`)).toEqual([])
+  await as(db, HOST, `update r3_items set opened = true, bargain = 'bargain' where idx = 0`)
+  expect(await as(db, BEN, `select bargain from r3_items`)).toEqual([{ bargain: 'bargain' }])
+})

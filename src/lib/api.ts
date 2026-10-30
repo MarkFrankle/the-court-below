@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { Confession, GameState, Matchup, Phase, R1Item, Realm, Shade, Vote } from './game'
+import type { Confession, GameState, Matchup, Phase, R1Item, R3Item, Realm, Shade, Vote } from './game'
 
 function check<T>(res: { data: T; error: { message: string } | null }): T {
   if (res.error) throw new Error(res.error.message)
@@ -115,6 +115,12 @@ export async function saveAnswer(matchup: number, text: string): Promise<void> {
   check(await supabase.from('r2_answers').upsert({ matchup, writer_id: await uid(), text }, { onConflict: 'matchup,writer_id' }))
 }
 
+// Every vote in a round, read by the engine for the Judgment (host only).
+export async function votesForRound(round: 1 | 2 | 3): Promise<Vote[]> {
+  const rows = check(await supabase.from('votes').select('voter_id, round, item, choice').eq('round', round)) as VoteRow[]
+  return rows.map(toVote)
+}
+
 // Fresh votes for one item, read by the engine at reveal time (host only).
 export async function votesFor(round: 1 | 2 | 3, item: number): Promise<Vote[]> {
   const rows = check(await supabase.from('votes').select('voter_id, round, item, choice').eq('round', round).eq('item', item)) as VoteRow[]
@@ -133,7 +139,7 @@ export interface HostData {
 }
 
 export interface GameData {
-  game: GameState; shades: Shade[]; r1: R1Item[]; r2: Matchup[]; r3: string[]; obols: { shadeId: string; amount: number }[]
+  game: GameState; shades: Shade[]; r1: R1Item[]; r2: Matchup[]; r3: R3Item[]; obols: { shadeId: string; amount: number }[]
   mine: Mine | null; host: HostData | null
 }
 
@@ -153,7 +159,8 @@ export async function fetchAll(opts: { userId: string | null; host: boolean }): 
     r1: (check(r1) as { idx: number; text: string; author_id: string | null; correct: number | null; guessers: number | null }[])
       .map((r) => ({ idx: r.idx, text: r.text, authorId: r.author_id, correct: r.correct, guessers: r.guessers })),
     r2: (check(r2) as MatchupRow[]).map(toMatchup),
-    r3: (check(r3) as { idx: number; shade_id: string }[]).map((r) => r.shade_id),
+    r3: (check(r3) as { idx: number; shade_id: string; opened: boolean; bargain: string | null }[])
+      .map((r) => ({ idx: r.idx, shadeId: r.shade_id, opened: r.opened, bargain: r.bargain })),
     obols: (check(o) as { shade_id: string; amount: number }[]).map((r) => ({ shadeId: r.shade_id, amount: r.amount })),
     mine: null,
     host: null,

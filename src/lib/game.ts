@@ -32,6 +32,8 @@ export interface Prompt { text: string; note?: string }
 
 export interface R1Item { idx: number; text: string; authorId: string | null; correct: number | null; guessers: number | null }
 
+export interface R3Item { idx: number; shadeId: string; opened: boolean; bargain: string | null }
+
 export interface Matchup {
   idx: number; prompt: string; note: string | null; subjectId: string | null; opened: boolean
   answerA: string | null; answerB: string | null; writerA: string | null; writerB: string | null

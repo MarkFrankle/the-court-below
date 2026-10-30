@@ -163,3 +163,46 @@ test('round 1 runs end to end', async () => {
   await advance()
   expect((await game()).phase).toBe('r2_intro')
 })
+
+test('round 3 judges every player and reveals realm by realm', async () => {
+  // Round 2 isn't built yet: Next straight through it.
+  while ((await game()).phase !== 'r3_intro') await advance()
+  await advance() // r3_intro 1: the realms
+  const d0 = await api.fetchAll({ userId: null, host: true })
+  const judged = d0.r3.map((i) => i.shadeId)
+
+  for (let i = 0; i < d0.r3.length; i++) {
+    await advance()
+    const d = await api.fetchAll({ userId: null, host: true })
+    expect(d.game).toMatchObject({ phase: 'r3_vote', step: i })
+    // The bargain goes public only for the shade that's up.
+    expect(d.r3[i].opened).toBe(true)
+    expect(d.r3[i].bargain).toBeTruthy()
+    if (i + 1 < d.r3.length) expect(d.r3[i + 1].bargain).toBeNull()
+    // The real guests send everyone to Tartarus.
+    for (const g of guests.slice(1)) ok(await g.client.from('votes').upsert({ voter_id: g.id, round: 3, item: i, choice: 'tartarus' }, { onConflict: 'voter_id,round,item' }))
+    await autoVote(d)
+  }
+
+  // Step 0 reveals Tartarus only: nobody is in Asphodel or Elysium yet, as a guest sees it.
+  await advance()
+  expect(await game()).toMatchObject({ phase: 'r3_reveal', step: 0 })
+  const seen = ok(await guests[1].client.from('shades').select('id, realm')) as { id: string; realm: string | null }[]
+  expect(seen.some((s) => s.realm === 'asphodel' || s.realm === 'elysium')).toBe(false)
+
+  await advance()
+  await advance()
+  const final = await api.fetchAll({ userId: null, host: true })
+  expect(final.game).toMatchObject({ phase: 'r3_reveal', step: 2 })
+  for (const id of judged) expect(final.shades.find((s) => s.id === id)?.realm).toBeTruthy()
+
+  await advance()
+  expect(await game()).toMatchObject({ phase: 'finale', step: 0 })
+  await advance()
+  await advance()
+  expect((await game()).phase).toBe('after')
+  // Shades can no longer be created.
+  const late = fresh()
+  ok(await late.auth.signInAnonymously())
+  expect((await late.from('shades').insert({ name: 'Too late' })).error?.message).toMatch(/row-level security/)
+})

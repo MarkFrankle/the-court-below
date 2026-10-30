@@ -1,5 +1,6 @@
 import type { GameData } from '../lib/api'
 import { uuid } from '../lib/random'
+import { REALMS } from '../lib/game'
 import { players } from '../lib/rounds'
 import { supabase } from '../lib/supabase'
 
@@ -39,6 +40,9 @@ export async function autoVote(d: GameData): Promise<void> {
   if (phase === 'r1_vote') {
     const ids = players(d.shades).map((s) => s.id)
     for (const t of testers) rows.push({ voter_id: t.id, round: 1, item: step, choice: pick(ids.filter((id) => id !== t.id)) })
+  }
+  if (phase === 'r3_vote') {
+    for (const t of testers) rows.push({ voter_id: t.id, round: 3, item: step, choice: pick(REALMS) })
   }
   if (rows.length === 0) return
   const res = await supabase.from('votes').upsert(rows, { onConflict: 'voter_id,round,item' })
