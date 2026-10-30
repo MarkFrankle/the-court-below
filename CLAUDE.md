@@ -10,6 +10,7 @@ The docs are the source of truth. Read the relevant one before changing anything
 - `docs/game-plan.md`: The Trial of the Shades, arrival form, three rounds, every on-screen line.
 - `docs/tech-spec.md`: architecture, schema and RLS, game phases, scoring, `/setup` page, deploy, test checklist.
 - `docs/setup-plan.md`: room checklists, shopping list, Saturday countdown. Seed content for `/setup`.
+- `agent_docs/local-supabase.md`: a local Supabase in Docker, the end-to-end game test, and a Realtime gotcha.
 
 If code and docs disagree, ask which one is right, then update the docs.
 
@@ -51,7 +52,8 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 
 ## Open
 
-- Mark's GitHub and Supabase access, if he takes over.
+- Before the party: paste `supabase/schema.sql` into the live project, and raise the anonymous sign-in rate limit (Authentication → Rate Limits; the default of 30 per hour per IP is shared by the whole party Wi-Fi).
+- Mark's Supabase access. He has write access on GitHub.
 - The unreadable "M:" under Drinks in `docs/sketches/menu-and-todo.jpg`: ask Mark.
 
 ## Conventions

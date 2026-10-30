@@ -1,0 +1,246 @@
+.guest {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: max(1.5rem, env(safe-area-inset-top)) 1rem max(3rem, env(safe-area-inset-bottom));
+}
+
+.guest-title {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 2.25rem;
+  text-align: center;
+}
+
+.arrival {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.arrival-welcome {
+  text-align: center;
+  font-size: 1.35rem;
+}
+
+.arrival-photo {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 1rem 0 0.25rem;
+  cursor: pointer;
+}
+
+.arrival-photo .button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.arrival-confessions {
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 1.25rem 0 0;
+  border: none;
+  border-top: 1px solid rgb(201 164 92 / 0.35);
+}
+
+.recorded {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  padding-top: 12vh;
+  text-align: center;
+}
+
+.recorded h2 {
+  font-size: 2rem;
+}
+
+.countdown {
+  margin: 1rem 0;
+  font-size: 3.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.guest-look {
+  padding-top: 30vh;
+  font-size: 2.25rem;
+  text-align: center;
+}
+
+/* Voting */
+.vote {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.vote-header {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+  padding-right: 3rem;
+}
+
+.vote-header p {
+  margin: 0;
+}
+
+.vote-header h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.vote-time {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font: 600 2rem var(--font-display);
+  color: var(--gold-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.pick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pick {
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.6rem 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  background: rgb(42 20 36 / 0.6);
+  color: var(--text);
+  font: 500 0.95rem var(--font-body);
+  cursor: pointer;
+}
+
+.pick.chosen {
+  border-color: var(--gold);
+  background: var(--plum-soft);
+  color: var(--gold-soft);
+}
+
+.pick.sending {
+  opacity: 0.6;
+}
+
+.realm-buttons {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.realm-button {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid var(--plum-soft);
+  border-radius: 0.75rem;
+  background: rgb(42 20 36 / 0.6);
+  color: var(--text);
+  text-align: left;
+  font: 0.85rem/1.35 var(--font-body);
+  cursor: pointer;
+}
+
+.realm-button .display {
+  font-size: 1.6rem;
+}
+
+.realm-description {
+  color: var(--muted);
+}
+
+.realm-button.chosen {
+  border-color: var(--gold);
+  background: var(--plum-soft);
+}
+
+.realm-button.sending {
+  opacity: 0.6;
+}
+
+.verdict {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  padding-top: 8vh;
+  text-align: center;
+}
+
+.verdict h2 {
+  margin: 0.5rem 0 0;
+  font-size: 2rem;
+}
+
+.verdict-realm {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.verdict-obols {
+  margin: 0;
+  font: 600 1rem var(--font-body);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.petition {
+  padding-top: 0.5rem;
+}
+
+.petition-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.petition-saved {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.answer-buttons {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.answer-button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  min-height: 6rem;
+  padding: 1rem;
+  border: 1px solid var(--plum-soft);
+  border-radius: 0.75rem;
+  background: rgb(42 20 36 / 0.6);
+  color: var(--text);
+  text-align: left;
+  font: 500 1.1rem/1.35 var(--font-body);
+  cursor: pointer;
+}
+
+.answer-button:disabled {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.answer-button.chosen {
+  border-color: var(--gold);
+  background: var(--plum-soft);
+}
+
+.answer-button.sending {
+  opacity: 0.6;
+}
+
+.answer-letter {
+  font-size: 2rem;
+}

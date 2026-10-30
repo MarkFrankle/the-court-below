@@ -1,25 +1,18 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/theme.css'
+import { GuestPage } from './guest/GuestPage'
+import { HostPage } from './host/HostPage'
 import { SetupPage } from './setup/SetupPage'
+import { TvPage } from './tv/TvPage'
 
 // Routes by pathname, no router library: / guest, /tv display, /host remote, /setup checklist.
-const lines: Record<string, string> = {
-  '/': 'The Court convenes on Saturday.',
-  '/tv': 'The Hall of Shades is being prepared.',
-  '/host': 'The remote is being forged.',
-  '/setup': 'The setup checklist arrives shortly.',
-}
-
 function App() {
   const path = window.location.pathname.replace(/\/+$/, '') || '/'
   if (path === '/setup') return <SetupPage />
-  return (
-    <main className="placeholder">
-      <h1>The Court Below</h1>
-      <p>{lines[path] ?? lines['/']}</p>
-    </main>
-  )
+  if (path === '/tv') return <TvPage />
+  if (path === '/host') return <HostPage />
+  return <GuestPage />
 }
 
 createRoot(document.getElementById('root')!).render(

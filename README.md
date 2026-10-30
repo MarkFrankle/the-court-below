@@ -2,7 +2,7 @@
 
 Plans for Hades and Persephone's Halloween party, **Saturday 31 October 2026, 20:00–02:00**: the party games, the web app that runs them, and the setup checklists.
 
-**Status:** app scaffold live at <https://thecourtbelow.netlify.app>; `/setup` and the game are next.
+**Status:** `/setup` is live at <https://thecourtbelow.netlify.app/setup>. The game (`/`, `/tv`, `/host`) is built on the `game` branch, waiting for `supabase/schema.sql` to be pasted into the live project.
 
 ## Docs
 
@@ -37,5 +37,7 @@ npm install
 cp .env.example .env.local   # fill in the Supabase project URL and anon key
 npm run dev
 ```
+
+`npm test` runs the unit and RLS tests. `npm run test:local` plays a whole game against a local Supabase; see [agent_docs/local-supabase.md](agent_docs/local-supabase.md).
 
 Every push to `main` deploys to Netlify. Start with the [technical spec](docs/tech-spec.md); copy and game content come from the [game plan](docs/game-plan.md).

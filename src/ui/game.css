@@ -1,0 +1,173 @@
+/* Shared by the guest phone, the TV and the remote. Scoped under .court so it never meets setup.css. */
+
+.court {
+  min-height: 100dvh;
+  background: radial-gradient(ellipse at top, var(--plum) 0%, var(--ink) 65%) fixed;
+  color: var(--text);
+}
+
+.court .display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--gold-soft);
+  letter-spacing: 0.01em;
+}
+
+.court .speech {
+  margin: 0;
+  font: italic 500 1.25rem/1.4 var(--font-display);
+  color: var(--text);
+}
+
+.court .muted {
+  color: var(--muted);
+}
+
+.court .button {
+  min-height: 3rem;
+  padding: 0 1.25rem;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--ink);
+  font: 600 1rem var(--font-body);
+  cursor: pointer;
+}
+
+.court .button:disabled {
+  opacity: 0.6;
+}
+
+.court .button.ghost {
+  background: none;
+  color: var(--gold);
+}
+
+.court .button.danger {
+  border-color: #8c2f2f;
+  background: none;
+  color: #e7a3a3;
+}
+
+.court .link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--gold);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.court .error {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  background: #4a1d1d;
+  color: #f2c6c6;
+  font-size: 0.9rem;
+}
+
+.court .field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.court .field-label {
+  font: 600 0.75rem var(--font-body);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.court .field-question {
+  font: 500 1.2rem/1.3 var(--font-display);
+  color: var(--text);
+}
+
+.court .field-hint {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.court .field input,
+.court .field textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--plum-soft);
+  border-radius: 0.5rem;
+  background: rgb(11 7 9 / 0.6);
+  color: var(--text);
+  font: 1rem var(--font-body);
+}
+
+.court .field textarea {
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+.court .field input:focus,
+.court .field textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.court .field input::placeholder,
+.court .field textarea::placeholder {
+  color: #6f625d;
+  font-style: italic;
+}
+
+/* Portraits sit in an arch, like a niche in a temple wall. */
+.portrait {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--gold);
+  border-radius: 999px 999px 0.4rem 0.4rem;
+  background: var(--plum);
+  box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px rgb(201 164 92 / 0.35);
+}
+
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portrait span {
+  font: 600 2rem var(--font-display);
+  color: var(--gold-soft);
+}
+
+.portrait-sm { width: 3rem; }
+.portrait-sm span { font-size: 1.25rem; }
+.portrait-md { width: 6rem; }
+.portrait-lg { width: 12rem; }
+.portrait-lg span { font-size: 4rem; }
+.portrait-xl { width: min(40vh, 26rem); }
+.portrait-xl span { font-size: 8rem; }
+
+/* A touch of each realm: gold light, grey mist, ember red. */
+.realm-elysium .display, .display.realm-elysium { color: #f1dc9c; }
+.realm-asphodel .display, .display.realm-asphodel { color: #c3bfc6; }
+.realm-tartarus .display, .display.realm-tartarus { color: #e08a6a; }
+
+.reconnecting {
+  position: fixed;
+  left: 1rem;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 50;
+  margin: 0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgb(42 20 36 / 0.85);
+  color: var(--muted);
+  font: 500 0.85rem var(--font-body);
+}

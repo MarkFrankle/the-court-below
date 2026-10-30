@@ -1,0 +1,363 @@
+/* The TV is read from across a room: big type, sized to the screen.
+   By height as well as width, so a short window (a laptop casting a tab) shrinks everything rather than overflowing. */
+.tv {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  font-size: clamp(1rem, min(2.2vw, 3.9vh), 3rem);
+  /* Cormorant's default numerals are old-style; scores and timers read better level. */
+  font-variant-numeric: lining-nums;
+}
+
+/* Portraits scale with the TV's type instead of the page's fixed sizes. */
+.tv .portrait-sm { width: 1.5em; }
+.tv .portrait-sm span { font-size: 0.8em; }
+.tv .portrait-md { width: 3.5em; }
+.tv .portrait-md span { font-size: 1.4em; }
+.tv .portrait-lg { width: 5.5em; }
+.tv .portrait-lg span { font-size: 2.2em; }
+
+.tv-stage {
+  display: grid;
+  /* safe: if a screen is ever too tall, it overflows at the bottom rather than cutting off its title. */
+  place-content: safe center;
+  /* Rows never shrink below their content. Portraits crop with overflow: hidden, which otherwise lets a crowded
+     grid collapse their row and draw the portrait over whatever comes next. */
+  grid-auto-rows: max-content;
+  justify-items: center;
+  gap: 4vh;
+  height: 100%;
+  padding: 6vh 8vw;
+  text-align: center;
+  animation: tv-fade 1.2s ease;
+}
+
+/* Screens space their lines with the grid's gap, so headings and paragraphs drop their default margins. */
+.tv-stage > :is(h1, h2, p) {
+  margin: 0;
+}
+
+.tv-title {
+  font-size: 2.5em;
+}
+
+.tv-big {
+  max-width: 40ch;
+  font-size: 1.6em;
+}
+
+.tv-lines {
+  gap: 6vh;
+}
+
+.speech-block {
+  max-width: 45ch;
+  margin: 0;
+}
+
+.speech-block cite {
+  display: block;
+  margin-bottom: 0.4em;
+  font: 600 0.6em var(--font-body);
+  font-style: normal;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.tv .speech {
+  font-size: 1.4em;
+}
+
+/* Hall of Shades */
+.hall {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  height: 100%;
+  padding: 4vh 6vw;
+  /* Dimmed so it reads as decor rather than a screen to watch. */
+  filter: brightness(0.85);
+}
+
+.hall-title {
+  margin: 0;
+  font-size: 1.6em;
+  opacity: 0.8;
+}
+
+.hall-shade {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3vh;
+  margin: 0;
+  animation: tv-fade 2s ease;
+}
+
+.hall-shade .portrait-xl {
+  width: auto;
+  height: min(62vh, 44rem);
+}
+
+.hall-shade figcaption {
+  display: grid;
+  justify-items: center;
+  gap: 0.3em;
+}
+
+.hall-name {
+  font-size: 1.8em;
+}
+
+.hall-guise {
+  font: italic 1em var(--font-display);
+  color: var(--muted);
+}
+
+.hall-realm {
+  font: 600 0.6em var(--font-body);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.hall-qr {
+  position: absolute;
+  right: 3vw;
+  bottom: 4vh;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: var(--gold-soft);
+  opacity: 0.85;
+}
+
+.hall-qr img {
+  display: block;
+  width: min(14vh, 9rem);
+  height: auto;
+}
+
+@keyframes tv-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Rounds */
+.tv-round {
+  margin: 0;
+  font: 600 0.6em var(--font-body);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.tv-confession {
+  max-width: 30ch;
+  font-size: 1.9em !important;
+}
+
+.tv-clock {
+  display: grid;
+  justify-items: center;
+  gap: 1vh;
+}
+
+.tv-seconds {
+  margin: 0;
+  font-size: 3em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.tv-heard {
+  margin: 0;
+  font-size: 1.6em;
+}
+
+.tv-count {
+  margin: 0;
+  color: var(--muted);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.tv-reveal {
+  gap: 2.5vh;
+}
+
+.tv-reveal .tv-confession {
+  font-size: 1.2em !important;
+  opacity: 0.8;
+}
+
+.tv-name {
+  margin: 0;
+  font-size: 2.2em;
+}
+
+.tv-verdict {
+  color: var(--gold-soft) !important;
+}
+
+/* Round 3 */
+.tv-realms {
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+  gap: 4vw;
+  font-size: 0.8em;
+}
+
+.tv-realm h2 {
+  margin: 0 0 0.5em;
+  font-size: 2.2em;
+}
+
+.tv-realm p {
+  margin: 0;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.tv-judged {
+  gap: 2vh;
+}
+
+.tv-bargain p {
+  margin: 0.2em 0;
+}
+
+.tv-souls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3vh 3vw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tv-souls li {
+  display: grid;
+  justify-items: center;
+  gap: 0.4em;
+  font-size: 0.8em;
+  animation: tv-fade 1.5s ease both;
+}
+
+.tv-souls .portrait-md {
+  width: min(9vw, 15vh);
+}
+
+/* Finale */
+.tv-leaderboard ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2vh 4vw;
+  width: min(80vw, 70rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75em;
+}
+
+.tv-leaderboard li {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 1em;
+  text-align: left;
+}
+
+.tv-lb-score {
+  font: 600 1.4em var(--font-display);
+  color: var(--gold-soft);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.tv-favored {
+  display: flex;
+  gap: 3vw;
+}
+
+.tv-favored figure {
+  margin: 0;
+}
+
+.tv-finale {
+  gap: 3vh;
+}
+
+/* Round 2 */
+.tv-prompt {
+  max-width: 32ch;
+  margin: 0;
+  font-size: 1.8em;
+}
+
+.tv-answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4vw;
+  width: min(86vw, 90rem);
+}
+
+.tv-answer {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 1vh;
+  padding: 3vh 2vw;
+  border: 1px solid var(--plum-soft);
+  border-radius: 1rem;
+  background: rgb(42 20 36 / 0.55);
+  transition: border-color 0.6s, box-shadow 0.6s;
+}
+
+.tv-answer.won {
+  border-color: var(--gold);
+  box-shadow: 0 0 3rem rgb(201 164 92 / 0.25);
+}
+
+.tv-answer.empty .speech {
+  color: var(--muted);
+}
+
+.tv-writer {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  margin-top: 1vh;
+  animation: tv-fade 1.2s ease;
+}
+
+.tv-rules {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3vw;
+  width: min(84vw, 80rem);
+  margin: 1vh 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tv-rules li {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 1.5vh;
+  padding-top: 2.5vh;
+  border-top: 1px solid rgb(201 164 92 / 0.35);
+}
+
+.tv-rule-number {
+  font-size: 2.4em;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+
+.tv-rules p {
+  margin: 0;
+  max-width: 26ch;
+  text-wrap: balance;
+  font-size: 0.8em;
+  line-height: 1.45;
+}
