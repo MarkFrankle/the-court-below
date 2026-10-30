@@ -239,7 +239,7 @@ test('only assigned writers answer, and only during r2_write', async () => {
 })
 
 test('round 1 authors stay hidden from guests', async () => {
-  await db.exec(`insert into r1_authors values (0, '${ANA}')`)
+  await db.exec(`insert into r1_items (idx, text) values (0, 'sin'); insert into r1_authors values (0, '${ANA}')`)
   expect(await as(db, BEN, `select * from r1_authors`)).toEqual([])
   expect(await as(db, HOST, `select author_id from r1_authors`)).toEqual([{ author_id: ANA }])
 })
