@@ -16,7 +16,7 @@ A QR code by the door opens a short form that takes about 2 minutes. The same QR
 
 **Welcome screen**
 
-> You have crossed the river. Before the Court can receive you, tell us who you were.
+> You have crossed the river Styx. Before the Court can receive you, tell us who you were.
 
 **The form**
 
