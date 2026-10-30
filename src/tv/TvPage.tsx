@@ -6,6 +6,7 @@ import { Speech } from '../ui/Speech'
 import { Hall } from './Hall'
 import { Finale } from './Finale'
 import { Round1 } from './Round1'
+import { Round2 } from './Round2'
 import { Round3 } from './Round3'
 import '../ui/game.css'
 import './tv.css'
@@ -34,11 +35,7 @@ function Tv() {
       {phase.startsWith('r1_') && <Round1 data={data} />}
       {phase.startsWith('r3_') && <Round3 data={data} />}
       {phase === 'finale' && <Finale data={data} />}
-      {phase.startsWith('r2_') && (
-        <section className="tv-stage">
-          <h1 className="display tv-title">The Court Below</h1>
-        </section>
-      )}
+      {phase.startsWith('r2_') && <Round2 data={data} />}
     </main>
   )
 }

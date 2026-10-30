@@ -270,3 +270,46 @@
 .tv-finale {
   gap: 3vh;
 }
+
+/* Round 2 */
+.tv-prompt {
+  max-width: 32ch;
+  margin: 0;
+  font-size: 1.8em;
+}
+
+.tv-answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4vw;
+  width: min(86vw, 90rem);
+}
+
+.tv-answer {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 1vh;
+  padding: 3vh 2vw;
+  border: 1px solid var(--plum-soft);
+  border-radius: 1rem;
+  background: rgb(42 20 36 / 0.55);
+  transition: border-color 0.6s, box-shadow 0.6s;
+}
+
+.tv-answer.won {
+  border-color: var(--gold);
+  box-shadow: 0 0 3rem rgb(201 164 92 / 0.25);
+}
+
+.tv-answer.empty .speech {
+  color: var(--muted);
+}
+
+.tv-writer {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  margin-top: 1vh;
+  animation: tv-fade 1.2s ease;
+}

@@ -164,9 +164,57 @@ test('round 1 runs end to end', async () => {
   expect((await game()).phase).toBe('r2_intro')
 })
 
+test('round 2 runs end to end', async () => {
+  await advance()
+  expect((await game()).phase).toBe('r2_write')
+  // Every real guest writes, except Cal, who writes nothing.
+  for (const g of guests.slice(1)) {
+    const mine = ok(await g.client.from('r2_assignments').select('matchup')) as { matchup: number }[]
+    expect(mine).toHaveLength(2)
+    if (g.name === 'Cal') continue
+    for (const a of mine) ok(await g.client.from('r2_answers').insert({ matchup: a.matchup, text: `${g.name} petitions ${a.matchup}` }))
+  }
+  expect(ok(await guests[1].client.from('r2_answers').select())).toHaveLength(2)
+  let d = await api.fetchAll({ userId: null, host: true })
+  await autoVote(d)
+  // 32 slots: Persephone Test (signed out, the host now) and Cal leave 4 empty.
+  expect(await api.answerCount()).toBe(28)
+
+  await advance()
+  d = await api.fetchAll({ userId: null, host: true })
+  expect(d.game).toMatchObject({ phase: 'r2_vote', step: 0 })
+  expect(d.r2[0].opened).toBe(true)
+  expect(d.r2[0].writerA).toBeNull()
+  expect(d.r2.slice(1).every((m) => !m.opened && m.answerA === null && m.answerB === null)).toBe(true)
+  // Answers can't change once voting starts.
+  const own = (ok(await guests[1].client.from('r2_answers').select('matchup')) as { matchup: number }[])[0]
+  expect(ok(await guests[1].client.from('r2_answers').update({ text: 'edited' }).eq('matchup', own.matchup).select())).toEqual([])
+
+  const cal = guests.find((g) => g.name === 'Cal')!
+  for (let i = 0; i < d.r2.length; i++) {
+    if (i > 0) await advance()
+    d = await api.fetchAll({ userId: null, host: true })
+    expect(d.game).toMatchObject({ phase: 'r2_vote', step: i })
+    for (const g of guests.slice(1)) {
+      const choice = d.r2[i].answerA ? 'a' : 'b'
+      ok(await g.client.from('votes').upsert({ voter_id: g.id, round: 2, item: i, choice }, { onConflict: 'voter_id,round,item' }))
+    }
+    await autoVote(d)
+    await advance()
+    d = await api.fetchAll({ userId: null, host: true })
+    const m = d.r2[i]
+    expect(d.game).toMatchObject({ phase: 'r2_reveal', step: i })
+    expect(m.votesA).not.toBeNull()
+    expect([m.writerA, m.writerB].sort()).toEqual(d.host!.assignments.filter((a) => a.matchup === i).map((a) => a.writerId).sort())
+    // Cal's side shows no petition and gets no votes.
+    if (m.writerA === cal.id) expect([m.answerA, m.votesA]).toEqual([null, 0])
+    if (m.writerB === cal.id) expect([m.answerB, m.votesB]).toEqual([null, 0])
+  }
+  await advance()
+  expect((await game()).phase).toBe('r3_intro')
+})
+
 test('round 3 judges every player and reveals realm by realm', async () => {
-  // Round 2 isn't built yet: Next straight through it.
-  while ((await game()).phase !== 'r3_intro') await advance()
   await advance() // r3_intro 1: the realms
   const d0 = await api.fetchAll({ userId: null, host: true })
   const judged = d0.r3.map((i) => i.shadeId)

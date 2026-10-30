@@ -30,6 +30,9 @@ export async function seedTestShades(n: number): Promise<void> {
   if (confessions.error) throw new Error(confessions.error.message)
 }
 
+const TEST_ANSWERS = ['A strongly worded scroll', 'Three pomegranates and a nap', 'Cerberus ate my homework',
+  'Unlimited breadsticks', 'Exact change for Charon', 'Absolutely nothing, with confidence']
+
 const pick = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)]
 
 // Casts a random vote for every test shade on the item that's up.
@@ -40,6 +43,18 @@ export async function autoVote(d: GameData): Promise<void> {
   if (phase === 'r1_vote') {
     const ids = players(d.shades).map((s) => s.id)
     for (const t of testers) rows.push({ voter_id: t.id, round: 1, item: step, choice: pick(ids.filter((id) => id !== t.id)) })
+  }
+  if (phase === 'r2_write') {
+    const ids = new Set(testers.map((t) => t.id))
+    const answers = (d.host?.assignments ?? []).filter((a) => ids.has(a.writerId))
+      .map((a) => ({ matchup: a.matchup, writer_id: a.writerId, text: pick(TEST_ANSWERS) }))
+    if (answers.length > 0) {
+      const res = await supabase.from('r2_answers').upsert(answers, { onConflict: 'matchup,writer_id' })
+      if (res.error) throw new Error(res.error.message)
+    }
+  }
+  if (phase === 'r2_vote') {
+    for (const t of testers) rows.push({ voter_id: t.id, round: 2, item: step, choice: pick(['a', 'b']) })
   }
   if (phase === 'r3_vote') {
     for (const t of testers) rows.push({ voter_id: t.id, round: 3, item: step, choice: pick(REALMS) })

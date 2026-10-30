@@ -2,8 +2,8 @@ import { PROMPTS } from '../content/prompts'
 import * as api from '../lib/api'
 import { nextStep } from '../lib/phases'
 import { buildRound1, buildRound2, buildRound3, players, voters } from '../lib/rounds'
-import { judge, realmsRevealed, scoreRound1 } from '../lib/scoring'
-import { confessionRef, REALMS, type Award } from '../lib/game'
+import { judge, realmsRevealed, scoreRound1, scoreRound2 } from '../lib/scoring'
+import { answerRef, confessionRef, REALMS, type Award } from '../lib/game'
 import { supabase } from '../lib/supabase'
 
 // The game engine runs on the host remote. Next changes the phase first (which closes any open vote),
@@ -42,6 +42,12 @@ async function doEntry(): Promise<void> {
       break
     case 'r1_reveal':
       if (d.r1[d.game.step] && !d.r1[d.game.step].authorId) await revealRound1(d, d.game.step)
+      break
+    case 'r2_vote':
+      if (d.r2[d.game.step] && !d.r2[d.game.step].opened) await openPetitions(d, d.game.step)
+      break
+    case 'r2_reveal':
+      if (d.r2[d.game.step] && d.r2[d.game.step].votesA === null) await revealPetitions(d, d.game.step)
       break
     case 'r3_vote':
       if (d.r3[d.game.step] && !d.r3[d.game.step].opened) await openJudgment(d, d.game.step)
@@ -114,4 +120,31 @@ async function revealRealms(d: api.GameData, step: number) {
     const ids = d.r3.filter((item) => judge({ item: item.idx, votes, voterIds }) === realm).map((item) => item.shadeId)
     if (ids.length > 0) check(await supabase.from('shades').update({ realm }).in('id', ids))
   }
+}
+
+function writersOf(d: api.GameData, idx: number) {
+  const a = d.host!.assignments.find((x) => x.matchup === idx && x.slot === 'a')!.writerId
+  const b = d.host!.assignments.find((x) => x.matchup === idx && x.slot === 'b')!.writerId
+  return { a, b }
+}
+
+// Both answers go public, unsigned, only when their prompt's vote opens. A missing or hidden one stays null.
+async function openPetitions(d: api.GameData, idx: number) {
+  const w = writersOf(d, idx)
+  const answer = (writerId: string) =>
+    d.host!.hidden.has(answerRef(idx, writerId)) ? null
+      : d.host!.answers.find((x) => x.matchup === idx && x.writerId === writerId)?.text.trim() || null
+  check(await supabase.from('r2_matchups').update({ opened: true, answer_a: answer(w.a), answer_b: answer(w.b) }).eq('idx', idx))
+}
+
+// Obols first, then the writers and the split: once votes_a is set the reveal is done.
+async function revealPetitions(d: api.GameData, idx: number) {
+  const w = writersOf(d, idx)
+  const m = d.r2[idx]
+  const result = scoreRound2({
+    item: idx, writerA: w.a, writerB: w.b, hasA: m.answerA !== null, hasB: m.answerB !== null,
+    votes: await api.votesFor(2, idx), voterIds: voters(d.shades),
+  })
+  await writeObols(result.awards)
+  check(await supabase.from('r2_matchups').update({ writer_a: w.a, writer_b: w.b, votes_a: result.votesA, votes_b: result.votesB }).eq('idx', idx))
 }

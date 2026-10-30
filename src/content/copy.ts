@@ -52,6 +52,8 @@ export const round2 = {
   title: 'Petitions to Hades',
   intro: { speaker: 'Hades', text: 'Shades may petition the Court. The most persuasive will be remembered. The rest will be forgotten, as usual.' } as Line,
   writing: 'The petitions are being written',
+  // Shown to the two writers while the room votes; from the game plan's description of Round 2.
+  bet: 'Your tap is a bet on which answer will win, worth 1 obol if right.',
   noPetition: 'The Court received no petition',
 }
 
