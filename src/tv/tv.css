@@ -7,13 +7,6 @@
   font-size: clamp(1rem, min(2.2vw, 3.9vh), 3rem);
   /* Cormorant's default numerals are old-style; scores and timers read better level. */
   font-variant-numeric: lining-nums;
-  /* A TV washes the pale gold out to white, so headings, names and the QR card use the stronger gold. */
-  --gold-soft: var(--gold);
-}
-
-/* Flat, not the phones' plum gradient: casting compresses a dark gradient into visible blocks and bands. */
-.court.tv {
-  background: var(--ink);
 }
 
 /* Portraits scale with the TV's type instead of the page's fixed sizes. */
@@ -83,6 +76,8 @@
   justify-items: center;
   height: 100%;
   padding: 4vh 6vw;
+  /* Dimmed so it reads as decor rather than a screen to watch. */
+  filter: brightness(0.85);
 }
 
 .hall-title {
