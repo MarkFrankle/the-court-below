@@ -1,0 +1,124 @@
+/* The TV is read from across a room: big type, sized to the screen. */
+.tv {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  font-size: clamp(1.75rem, 2.2vw, 3rem);
+}
+
+.tv-stage {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 4vh;
+  height: 100%;
+  padding: 6vh 8vw;
+  text-align: center;
+  animation: tv-fade 1.2s ease;
+}
+
+.tv-title {
+  font-size: 2.5em;
+}
+
+.tv-big {
+  max-width: 40ch;
+  font-size: 1.6em;
+}
+
+.tv-lines {
+  gap: 6vh;
+}
+
+.speech-block {
+  max-width: 45ch;
+  margin: 0;
+}
+
+.speech-block cite {
+  display: block;
+  margin-bottom: 0.4em;
+  font: 600 0.6em var(--font-body);
+  font-style: normal;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.tv .speech {
+  font-size: 1.4em;
+}
+
+/* Hall of Shades */
+.hall {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  height: 100%;
+  padding: 4vh 6vw;
+  /* Dimmed so it reads as decor rather than a screen to watch. */
+  filter: brightness(0.85);
+}
+
+.hall-title {
+  margin: 0;
+  font-size: 1.6em;
+  opacity: 0.8;
+}
+
+.hall-shade {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3vh;
+  margin: 0;
+  animation: tv-fade 2s ease;
+}
+
+.hall-shade .portrait-xl {
+  width: auto;
+  height: min(62vh, 44rem);
+}
+
+.hall-shade figcaption {
+  display: grid;
+  justify-items: center;
+  gap: 0.3em;
+}
+
+.hall-name {
+  font-size: 1.8em;
+}
+
+.hall-guise {
+  font: italic 1em var(--font-display);
+  color: var(--muted);
+}
+
+.hall-realm {
+  font: 600 0.6em var(--font-body);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.hall-qr {
+  position: absolute;
+  right: 3vw;
+  bottom: 4vh;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: var(--gold-soft);
+  opacity: 0.85;
+}
+
+.hall-qr img {
+  display: block;
+  width: min(14vh, 9rem);
+  height: auto;
+}
+
+@keyframes tv-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
