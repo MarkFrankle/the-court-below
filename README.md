@@ -30,7 +30,7 @@ Sarah and Mark host as Hades and Persephone.
 
 ## Develop
 
-Needs Node 20.19 or newer.
+Needs Node 20.19 or newer
 
 ```bash
 npm install
