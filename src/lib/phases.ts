@@ -49,13 +49,12 @@ function endBefore(round: 1 | 2 | 3 | 4, c: Counts): Next {
   return to('intro', STEPS.intro - 1)
 }
 
-// What the remote's Back button moves to: the inverse of nextStep. Null in the lobby and on the first
-// opening screen, since the rounds are built from the shades there when the Court opens.
+// What the remote's Back button moves to: the inverse of nextStep. Null in the lobby.
 export function prevStep(g: { phase: Phase; step: number }, c: Counts): Next | null {
   const { phase, step } = g
   switch (phase) {
     case 'lobby': return null
-    case 'intro': return step > 0 ? to('intro', step - 1) : null
+    case 'intro': return step > 0 ? to('intro', step - 1) : to('lobby')
     case 'r1_intro': return endBefore(1, c)
     case 'r1_vote': return step > 0 ? to('r1_reveal', step - 1) : to('r1_intro')
     case 'r1_reveal': return to('r1_vote', step)

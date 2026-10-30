@@ -57,6 +57,15 @@ async function undo(left: GameState) {
     check(await supabase.from('obols').delete().eq('round', 2).eq('item', step))
     check(await supabase.from('r2_matchups').update({ writer_a: null, writer_b: null, votes_a: null, votes_b: null }).eq('idx', step))
   }
+  // Back to the lobby: take the rounds down, so Next builds them again from the shades there then.
+  // r3_items first: the build skips while it exists, so a clear that fails partway makes the next build fail
+  // loudly rather than run a half-cleared Trial.
+  if (phase === 'intro' && step === 0) {
+    check(await supabase.from('r3_items').delete().gte('idx', 0))
+    check(await supabase.from('r2_assignments').delete().gte('matchup', 0))
+    check(await supabase.from('r2_matchups').delete().gte('idx', 0))
+    check(await supabase.from('r1_items').delete().gte('idx', 0)) // r1_authors go with them
+  }
   // Back from the first vote to the writing: take the answers off the TV, so edits are copied in again.
   if (phase === 'r2_vote' && step === 0) {
     check(await supabase.from('r2_matchups').update({ opened: false, answer_a: null, answer_b: null }).eq('idx', 0))
