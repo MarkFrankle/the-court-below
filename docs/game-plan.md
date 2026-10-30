@@ -177,7 +177,7 @@ The Trial sits at 23:00, three hours in. Most guests have arrived by then and th
 
 | Time | What happens | On the TV |
 | --- | --- | --- |
-| 19:30 | Laptop casting, playlist on the speaker, QR cards out, seed envelopes ready | Hall of Shades: dark portrait gallery, small QR code in a corner |
+| 19:30 | Laptop casting, playlist on the speaker, QR cards out, seed envelopes ready | Hall of Shades: title page, a row of portraits, small QR code in a corner |
 | 20:00 | Doors open; guests create shades on arrival | Hall of Shades fills as guests arrive |
 | 21:00 | Persephone's Seeds announced once | Hall of Shades |
 | 22:45 | Last call to create a full shade (later arrivals get the quick form) | Hall of Shades |
@@ -189,7 +189,7 @@ The Trial sits at 23:00, three hours in. Most guests have arrived by then and th
 
 ## TV, music and photos
 
-- **TV.** A laptop casts the `/tv` page to the Chromecast. Outside the Trial it shows the Hall of Shades: a slow, dark gallery of portraits with each shade's name and guise, and a small QR code in one corner. Brightness down, so it reads as decor rather than a screen to watch.
+- **TV.** A laptop casts the `/tv` page to the Chromecast. Outside the Trial it shows the Hall of Shades: a title page over the invitation art, with every shade's portrait and name in a row along the bottom, and a small QR code in one corner. Brightness down, so it reads as decor rather than a screen to watch.
 - **Music.** The Spotify playlist plays on the speaker all night. Turn it down for the Trial and back up afterwards.
 - **Joining.** One link for both arrival and the Trial, on a QR code printed on 2–3 cards and shown on the TV.
 - **Wi-Fi.** Print the guest Wi-Fi name and password on the QR cards, since phones need internet throughout.

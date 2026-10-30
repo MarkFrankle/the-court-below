@@ -57,42 +57,61 @@
 /* Hall of Shades */
 .hall {
   display: grid;
-  grid-template-rows: auto 1fr;
+  /* minmax(0, ...): a full row shrinks its shades instead of widening the page. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
   justify-items: center;
   height: 100%;
-  padding: 4vh 6vw;
+  padding: 4vh 4vw;
+  /* The invitation art, darkened at the edges and the bottom so the title and the row read over it. */
+  background:
+    linear-gradient(rgb(11 7 9 / 0.35), rgb(11 7 9 / 0.2) 40%, rgb(11 7 9 / 0.9) 82%),
+    radial-gradient(ellipse at center, transparent 35%, rgb(11 7 9 / 0.75)),
+    url('/halloween-2026.jpeg') center / cover;
   /* Dimmed so it reads as decor rather than a screen to watch. */
   filter: brightness(0.85);
 }
 
 .hall-title {
+  align-self: center;
   margin: 0;
-  font-size: 1.6em;
-  opacity: 0.8;
+  font-size: 4em;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 0.6em rgb(11 7 9 / 0.9);
 }
 
-.hall-shade {
+/* Between the QR code and Netlify's badge, so as wide as the QR code's corner on both sides.
+   Items shrink, rather than wrap, once the row is full. */
+.hall-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.8vw;
+  width: 100%;
+  margin: 0;
+  padding: 0 max(calc(min(14vh, 9rem) + 2rem - 1vw), 13rem - 4vw);
+  list-style: none;
+}
+
+.hall-row li {
   display: grid;
   justify-items: center;
-  align-content: center;
-  gap: 3vh;
-  margin: 0;
+  gap: 0.25em;
+  flex: 0 1 2.4em;
+  min-width: 0;
   animation: tv-fade 2s ease;
 }
 
-.hall-shade .portrait-xl {
-  width: auto;
-  height: min(62vh, 44rem);
-}
-
-.hall-shade figcaption {
-  display: grid;
-  justify-items: center;
-  gap: 0.3em;
+.hall-row .portrait {
+  width: min(100%, 1.8em);
 }
 
 .hall-name {
-  font-size: 1.8em;
+  max-width: 100%;
+  overflow: hidden;
+  font: 600 0.45em var(--font-body);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
 }
 
 .hall-guise {
@@ -101,13 +120,14 @@
 }
 
 .hall-realm {
-  font: 600 0.6em var(--font-body);
-  letter-spacing: 0.2em;
+  max-width: 100%;
+  overflow: hidden;
+  font: 600 0.3em var(--font-body);
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--gold);
 }
 
-/* Bottom left: Netlify's free-plan badge covers the bottom right corner. */
 .hall-qr {
   position: absolute;
   left: 3vw;

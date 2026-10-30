@@ -120,6 +120,20 @@ test('the remote reruns the build harmlessly', async () => {
   expect(after.r1.map((i) => i.text)).toEqual(before.r1.map((i) => i.text))
 })
 
+test('back to the lobby takes the rounds down, and Next builds them again', async () => {
+  await retreat()
+  let d = await api.fetchAll({ userId: null, host: true })
+  expect(d.game.phase).toBe('lobby')
+  expect([d.r1.length, d.r2.length, d.r3.length]).toEqual([0, 0, 0])
+  expect([d.host!.r1Authors.length, d.host!.assignments.length]).toEqual([0, 0])
+
+  await advance()
+  d = await api.fetchAll({ userId: null, host: true })
+  expect(d.game.phase).toBe('intro')
+  expect([d.r1.length, d.r2.length, d.r3.length]).toEqual([8, 16, 16])
+  expect([d.host!.r1Authors.length, d.host!.assignments.length]).toEqual([8, 32])
+})
+
 test('round 1 runs end to end', async () => {
   await advance() // intro 1
   await advance() // intro 2

@@ -67,13 +67,13 @@ test.each([
 ])('back undoes next, screen by screen (%s)', (_, counts) => {
   const seq = walk(counts)
   // From the second opening screen on, back lands on the screen before.
-  for (let i = 2; i < seq.length; i++) {
+  for (let i = 1; i < seq.length; i++) {
     expect(prevStep(seq[i] as never, counts), `${seq[i].phase} ${seq[i].step}`).toMatchObject(seq[i - 1])
   }
 })
 
-test('back stops at the first opening screen, since the rounds are built', () => {
-  expect(prevStep({ phase: 'intro', step: 0 }, c)).toBeNull()
+test('back from the first opening screen returns to the lobby, and stops there', () => {
+  expect(prevStep({ phase: 'intro', step: 0 }, c)).toEqual({ phase: 'lobby', step: 0, seconds: 0 })
   expect(prevStep({ phase: 'lobby', step: 0 }, c)).toBeNull()
 })
 

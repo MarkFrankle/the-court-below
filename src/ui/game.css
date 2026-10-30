@@ -166,8 +166,6 @@
 .portrait-md { width: 6rem; }
 .portrait-lg { width: 12rem; }
 .portrait-lg span { font-size: 4rem; }
-.portrait-xl { width: min(40vh, 26rem); }
-.portrait-xl span { font-size: 8rem; }
 
 /* A touch of each realm: gold light, grey mist, ember red. */
 .realm-elysium .display, .display.realm-elysium { color: #f1dc9c; }
