@@ -50,21 +50,6 @@
   gap: 6vh;
 }
 
-.speech-block {
-  max-width: 45ch;
-  margin: 0;
-}
-
-.speech-block cite {
-  display: block;
-  margin-bottom: 0.4em;
-  font: 600 0.6em var(--font-body);
-  font-style: normal;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
 .tv .speech {
   font-size: 1.4em;
 }
@@ -280,7 +265,14 @@
 }
 
 .tv-favored figure {
+  display: grid;
+  justify-items: center;
+  gap: 1.5vh;
   margin: 0;
+}
+
+.tv-favored-name {
+  font-size: 1.6em;
 }
 
 .tv-finale {

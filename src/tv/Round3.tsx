@@ -1,8 +1,7 @@
-import { arrival, realmReveal, realms, round3 } from '../content/copy'
+import { arrival, realms, round3 } from '../content/copy'
 import type { GameData } from '../lib/api'
 import { REALMS } from '../lib/game'
 import { Portrait } from '../ui/Portrait'
-import { Speech } from '../ui/Speech'
 import { Clock } from './Clock'
 
 export function Round3(props: { data: GameData }) {
@@ -13,7 +12,6 @@ export function Round3(props: { data: GameData }) {
       <section className="tv-stage">
         <p className="tv-round">Round 3</p>
         <h1 className="display tv-title">{round3.title}</h1>
-        <Speech line={round3.intro} />
       </section>
     )
   }
@@ -59,7 +57,7 @@ export function Round3(props: { data: GameData }) {
   const souls = props.data.shades.filter((s) => s.realm === realm && judged.has(s.id))
   return (
     <section className={`tv-stage tv-verdict-stage realm-${realm}`} key={`realm-${realm}`}>
-      <Speech line={realmReveal[realm]} />
+      <h1 className="display tv-title">{realms[realm].name}</h1>
       <ul className="tv-souls">
         {souls.map((s) => (
           <li key={s.id}>

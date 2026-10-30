@@ -5,7 +5,7 @@ Guests create a "shade" on their phone when they arrive. At 23:00 everyone plays
 - **No mythology knowledge needed.** The game explains any lore in one line. The jokes come from the guests, not the myths.
 - **Phones come out twice.** About 2 minutes on arrival, about 30 minutes at the Trial.
 - **Sized for about 15 guests.** Anyone who arrives after 23:00 can still join mid-Trial with a quick shade (see [Late arrivals](#late-arrivals)).
-- **Hades and Persephone host.** The screen gives you lines to read, so you can play along rather than run a show.
+- **Hades and Persephone host.** The remote on your phone gives you lines to read, so you can play along rather than run a show. The TV shows the game, not the script.
 - **One background game with no phones.** Persephone's Seeds runs from 21:00 until the Trial.
 
 How it's built: see the [technical spec](tech-spec.md).
@@ -58,7 +58,7 @@ The shade with the most obols is named **Favored of Hades** at the end. Scores s
 
 **Host controls.** The hosts run the game from a remote on a phone: Next, extra time, and hiding any confession or answer you don't want on screen. The TV shows only the game. You never type during the game.
 
-**Opening lines**
+**Opening lines** (the TV shows the title, The Court Below)
 
 > **Hades:** Silence, shades. The Court is in session.
 >
@@ -141,7 +141,7 @@ Each shade's portrait, guise and bargain appear for 12 seconds, and the room vot
 - **Asphodel.** The Asphodel Meadows: a grey field of pale flowers where most souls drift forever. Not a punishment. Not a reward. For those who lived a perfectly pleasant, entirely forgettable life.
 - **Tartarus.** The pit beneath the Underworld, where the gods send their worst. Sisyphus is down there pushing his boulder uphill for eternity. Reserved for villains, tricksters, and anyone caught double-dipping at the snack table.
 
-**The reveal** (realm by realm, portraits filling the screen)
+**The reveal** (realm by realm: the realm's name, portraits filling the screen)
 
 > **Hades:** First, those condemned to Tartarus.
 >
@@ -149,7 +149,7 @@ Each shade's portrait, guise and bargain appear for 12 seconds, and the room vot
 >
 > **Hades:** And finally, the blessed of Elysium.
 
-**Closing lines**
+**Closing lines** (the TV shows the Favored of Hades: portrait and name)
 
 > **Persephone:** The judgment is spoken. Elysium, the good wine is yours. Asphodel, drift on. Tartarus, the bar is still open, but we are watching you.
 >

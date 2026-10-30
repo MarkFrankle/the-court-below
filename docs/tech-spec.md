@@ -61,9 +61,9 @@ The display and the controls are separate routes, because casting a Chrome tab m
 | `finale`, `after` | Your portrait, realm and obol total. No score is shown on any phone before this |
 | Anything else | "Look to the Court" (the TV). A vote screen whose time is up shows "The Court has heard enough" |
 
-**TV screens:** Hall of Shades in `lobby` and `after` (one portrait at a time, 8-second crossfade, name and guise, a QR code of the site in a corner, realm labels in `after`), the opening (lines, the obol line, the Seeds toast), each round's intro, each item with a countdown and a "9 of 15 have judged" counter, reveals, the realm-by-realm reveal, the obol leaderboard and the Favored of Hades.
+**TV screens:** Hall of Shades in `lobby` and `after` (one portrait at a time, 8-second crossfade, name and guise, a QR code of the site in a corner, realm labels in `after`), the opening (the title, the obol line, the Seeds toast), each round's intro, each item with a countdown and a "9 of 15 have judged" counter, reveals, the realm-by-realm reveal (each realm's name and its shades), the obol leaderboard and the Favored of Hades with their names. Hades' and Persephone's lines are not on the TV: they're on the remote.
 
-**Host remote:** the phase in words, the countdown and the live counter, Next (labelled with where it goes, and during Round 2 writing with how many petitions are still missing), Back (see below), +10 seconds, the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades ("Write test petitions" during Round 2 writing), and Reset game (with a confirmation).
+**Host remote:** the phase in words, the countdown and the live counter, the lines Hades and Persephone read aloud for the screen the TV is showing (`src/host/script.ts`; the closing line with the Favored of Hades' name filled in), Next (labelled with where it goes, and during Round 2 writing with how many petitions are still missing), Back (see below), +10 seconds, the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades ("Write test petitions" during Round 2 writing), and Reset game (with a confirmation).
 
 ## Game phases
 
@@ -261,7 +261,7 @@ The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerati
 **Before Saturday**
 
 - [x] Paste `schema.sql` into the live project.
-- [ ] Run `supabase/game_rls_checks.md` against the live project.
+- [x] Run `supabase/game_rls_checks.md` against the live project (30 October: all 16 checks passed).
 - [x] Raise the anonymous sign-in rate limit.
 - [ ] Rehearsal: laptop casting `/tv`, a phone on `/host`, two or three phones plus test shades, all three rounds end to end.
 - [ ] Lock a phone mid-round, unlock it and confirm it catches up.

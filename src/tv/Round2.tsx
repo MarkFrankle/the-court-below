@@ -2,7 +2,6 @@ import { round2 } from '../content/copy'
 import type { GameData } from '../lib/api'
 import { petitionWinner } from '../lib/scoring'
 import { Portrait } from '../ui/Portrait'
-import { Speech } from '../ui/Speech'
 import { Clock } from './Clock'
 
 export function Round2(props: { data: GameData }) {
@@ -21,7 +20,6 @@ export function Round2(props: { data: GameData }) {
             </li>
           ))}
         </ol>
-        <Speech line={round2.intro} />
       </section>
     )
   }

@@ -2,9 +2,8 @@ import { closing, realms } from '../content/copy'
 import type { GameData } from '../lib/api'
 import { favored, totals } from '../lib/scoring'
 import { Portrait } from '../ui/Portrait'
-import { Speech } from '../ui/Speech'
 
-// Step 0: every shade's obols, highest first. Step 1: the closing lines and the Favored of Hades.
+// Step 0: every shade's obols, highest first. Step 1: the Favored of Hades, while the hosts read the closing lines.
 export function Finale(props: { data: GameData }) {
   const shades = props.data.shades.filter((s) => !s.hidden)
   const t = totals(props.data.obols)
@@ -29,23 +28,21 @@ export function Finale(props: { data: GameData }) {
     )
   }
 
-  const names = winners.map((w) => w.name).join(' and ')
   return (
     <section className="tv-stage tv-finale">
-      <Speech line={closing.persephone} />
       {winners.length > 0 && (
         <>
           <div className="tv-favored">
             {winners.map((w) => (
               <figure key={w.id}>
                 <Portrait shade={w} size="lg" />
+                <figcaption className="display tv-favored-name">{w.name}</figcaption>
               </figure>
             ))}
           </div>
           <p className="tv-round">{closing.favored}</p>
         </>
       )}
-      <Speech line={closing.hades} name={names || '…'} />
     </section>
   )
 }

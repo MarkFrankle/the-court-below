@@ -2,7 +2,6 @@ import { round1 } from '../content/copy'
 import type { GameData } from '../lib/api'
 import { revealTone } from '../lib/scoring'
 import { Portrait } from '../ui/Portrait'
-import { Speech } from '../ui/Speech'
 import { Clock } from './Clock'
 
 export function Round1(props: { data: GameData }) {
@@ -13,7 +12,6 @@ export function Round1(props: { data: GameData }) {
       <section className="tv-stage">
         <p className="tv-round">Round 1</p>
         <h1 className="display tv-title">{round1.title}</h1>
-        <Speech line={round1.intro} />
       </section>
     )
   }
