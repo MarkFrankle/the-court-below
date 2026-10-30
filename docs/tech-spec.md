@@ -247,7 +247,7 @@ Anonymous sign-ins, the host users and the Site URL are already set up (see CLAU
 
 **Party materials**
 
-The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerating if the URL changes. Print 2–3 cards with a QR code of `https://thecourtbelow.netlify.app` and the guest Wi-Fi details, from any QR generator.
+The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerating if the URL changes. Print 2–3 cards with a QR code of `https://the-court-below.netlify.app` and the guest Wi-Fi details, from any QR generator.
 
 ## Testing and failure modes
 
@@ -260,8 +260,9 @@ The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerati
 
 **Before Saturday**
 
-- [ ] Paste `schema.sql` into the live project and run `supabase/game_rls_checks.md`.
-- [ ] Raise the anonymous sign-in rate limit.
+- [x] Paste `schema.sql` into the live project.
+- [ ] Run `supabase/game_rls_checks.md` against the live project.
+- [x] Raise the anonymous sign-in rate limit.
 - [ ] Rehearsal: laptop casting `/tv`, a phone on `/host`, two or three phones plus test shades, all three rounds end to end.
 - [ ] Lock a phone mid-round, unlock it and confirm it catches up.
 - [ ] Upload a portrait from an iPhone and an Android phone, and retake one.
@@ -289,4 +290,4 @@ The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerati
 - **Round 3 ties:** Asphodel.
 - **The engine:** on the host remote, not the TV, so the TV is a plain display that can't stall the game.
 
-The Netlify site is `thecourtbelow` (thecourtbelow.netlify.app). The Friday rehearsal has no fixed time: it happens in the evening while friends help decorate.
+The Netlify site is `the-court-below` (the-court-below.netlify.app), on Mark's Netlify account. The Friday rehearsal has no fixed time: it happens in the evening while friends help decorate.

@@ -1,7 +1,7 @@
 # The Court Below
 
 Web app for Sarah and Mark's Halloween party, Saturday 31 October 2026, 20:00–02:00, about 15 guests.
-Live at <https://thecourtbelow.netlify.app>.
+Live at <https://the-court-below.netlify.app>.
 
 ## Read first
 
@@ -45,15 +45,13 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 - After seeding, the live setup list is the source of truth; Claude edits it by writing SQL scripts that target tasks by `key`, which Sarah pastes.
 - Late guests after 23:00 get a quick form (name and portrait only); they vote from the next round and aren't guessed, writers or judged. Spec: `shades.late`.
 - Obol totals stay hidden until the finale.
-- The Netlify site is `thecourtbelow`.
+- The Netlify site is `the-court-below`, on Mark's Netlify account, building from `MarkFrankle/the-court-below`. Sarah's old site `thecourtbelow` ran out of free-tier credits and no longer builds.
 - No migrations: SQL lives in `supabase/*.sql` as the spec lays out, and gets pasted into the Supabase SQL editor by hand. Never create `supabase/migrations/`; the Supabase GitHub integration would apply it to production on push.
 - Two host accounts, both users in the Supabase project (Authentication → Users → Create new user, with a password): `sarah@frankle.fyi` and `mark@frankle.fyi`. Separate from Sarah's GitHub-based dashboard login. They become hosts once the schema exists: `insert into hosts select id from auth.users where email in ('sarah@frankle.fyi', 'mark@frankle.fyi');`
-- Supabase auth: anonymous sign-ins on, new-user signups on (anonymous sign-in needs it), Site URL `https://thecourtbelow.netlify.app`.
+- Supabase auth: anonymous sign-ins on, new-user signups on (anonymous sign-in needs it), Site URL `https://the-court-below.netlify.app`.
 
 ## Open
 
-- Before the party: paste `supabase/schema.sql` into the live project, and raise the anonymous sign-in rate limit (Authentication → Rate Limits; the default of 30 per hour per IP is shared by the whole party Wi-Fi).
-- Mark's Supabase access. He has write access on GitHub.
 - The unreadable "M:" under Drinks in `docs/sketches/menu-and-todo.jpg`: ask Mark.
 
 ## Conventions
