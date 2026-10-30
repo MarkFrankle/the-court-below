@@ -63,7 +63,7 @@ The display and the controls are separate routes, because casting a Chrome tab m
 
 **TV screens:** Hall of Shades in `lobby` and `after` (one portrait at a time, 8-second crossfade, name and guise, a QR code of the site in a corner, realm labels in `after`), the opening (lines, the obol line, the Seeds toast), each round's intro, each item with a countdown and a "9 of 15 have judged" counter, reveals, the realm-by-realm reveal, the obol leaderboard and the Favored of Hades.
 
-**Host remote:** the phase in words, the countdown and the live counter, Next (labelled with where it goes), +10 seconds, the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades, and Reset game (with a confirmation).
+**Host remote:** the phase in words, the countdown and the live counter, Next (labelled with where it goes, and during Round 2 writing with how many petitions are still missing), +10 seconds, the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades ("Write test petitions" during Round 2 writing), and Reset game (with a confirmation).
 
 ## Game phases
 

@@ -100,6 +100,8 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
   const next = nextStep(game, counts)
   const voterCount = voters(data.shades).size
   const writers = data.host?.assignments.length ?? 0
+  // Leaving the writing early shows those petitions as "no petition", so Next says how many are still missing.
+  const missing = game.phase === 'r2_write' ? writers - (live ?? data.host?.answers.length ?? 0) : 0
   const visible = data.shades.filter((s) => !s.hidden)
   const hasTest = data.shades.some((s) => s.test)
   // Once the rounds are built, hiding a shade in them would leave Round 1 unguessable and their petitions empty.
@@ -117,7 +119,7 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
       </header>
 
       <button className="button host-next" disabled={busy || !next} onClick={() => run(advance)}>
-        {next ? `Next: ${describe(next, counts)}` : 'The Court is adjourned'}
+        {next ? `Next: ${describe(next, counts)}${missing > 0 ? ` (${missing} of ${writers} petitions missing)` : ''}` : 'The Court is adjourned'}
       </button>
       {game.deadlineAt && (
         <button className="button ghost" disabled={busy} onClick={() => run(() => api.addTime(10))}>+10 seconds</button>
@@ -159,7 +161,9 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
         <h2 className="display">Rehearsal</h2>
         <div className="host-row">
           {hasTest && ['r1_vote', 'r2_write', 'r2_vote', 'r3_vote'].includes(game.phase) && (
-            <button className="button ghost" disabled={busy} onClick={() => run(() => autoVote(data))}>Auto-vote for test shades</button>
+            <button className="button ghost" disabled={busy} onClick={() => run(() => autoVote(data))}>
+              {game.phase === 'r2_write' ? 'Write test petitions' : 'Auto-vote for test shades'}
+            </button>
           )}
           {game.phase === 'lobby' && !hasTest && (
             <button className="button ghost" disabled={busy} onClick={() => run(() => seedTestShades(12))}>Seed 12 test shades</button>
