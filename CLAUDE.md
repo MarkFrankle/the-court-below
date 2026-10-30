@@ -52,7 +52,8 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 
 ## Open
 
-- Mark's GitHub and Supabase access, if he takes over.
+- Before the party: paste `supabase/schema.sql` into the live project, and raise the anonymous sign-in rate limit (Authentication → Rate Limits; the default of 30 per hour per IP is shared by the whole party Wi-Fi).
+- Mark's Supabase access. He has write access on GitHub.
 - The unreadable "M:" under Drinks in `docs/sketches/menu-and-todo.jpg`: ask Mark.
 
 ## Conventions

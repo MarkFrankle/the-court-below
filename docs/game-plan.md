@@ -42,7 +42,7 @@ Guests who scan the QR code after the Trial has started get a shorter form: mort
 
 > The Court is already in session. Give us your name and your likeness, and take your seat among the shades.
 
-A late shade votes from the next round on and can earn obols for correct guesses in Round 1. They have no confessions, so they aren't guessed in Round 1, don't write in Round 2 and aren't judged in Round 3. Their portrait joins the Hall of Shades afterwards.
+A late shade votes as soon as they join and can earn obols for correct guesses in Round 1. They have no confessions, so they aren't guessed in Round 1, don't write in Round 2 and aren't judged in Round 3. Their portrait joins the Hall of Shades afterwards.
 
 ## The Trial: how the shared game works
 
@@ -56,7 +56,7 @@ The Trial is a 30-minute, three-round game show on the TV, presided over by Hade
 
 The shade with the most obols is named **Favored of Hades** at the end. Scores stay hidden until then: no running totals on phones or the TV, and the full leaderboard appears only at the finale.
 
-**Host controls.** The hosts run the game from a remote on a phone: Next, extra time, and hiding any answer you don't want on screen. The TV shows only the game. You never type during the game.
+**Host controls.** The hosts run the game from a remote on a phone: Next, extra time, and hiding any confession or answer you don't want on screen. The TV shows only the game. You never type during the game.
 
 **Opening lines**
 
@@ -110,13 +110,21 @@ This is a Quiplash-style writing round. Each prompt goes to two guests, and ever
 - Zeus has finally RSVP'd. His excuse for being late:
 - A new rule for the Court Below, starting tonight.
 
+**Spare prompts** (used only with more than 15 players)
+
+- [Name]'s last words before crossing the river:
+- The one thing [Name] would smuggle past Cerberus. *Cerberus is Hades' three-headed guard dog.*
+- A terrible name for a cocktail served in the Underworld.
+- What Sisyphus would do if he ever got the boulder to the top. *Sisyphus pushes a boulder uphill for eternity.*
+- Hades' least favourite party guest, and why.
+
 **Round intro**
 
 > **Hades:** Shades may petition the Court. The most persuasive will be remembered. The rest will be forgotten, as usual.
 
 ## Round 3: The Judgment
 
-Each shade's portrait, guise and bargain appear for 12 seconds, and the room votes on where they spend eternity. Votes stay hidden until a grand reveal at the end. A majority decides, and Persephone breaks ties from the remote.
+Each shade's portrait, guise and bargain appear for 12 seconds, and the room votes on where they spend eternity. Votes stay hidden until a grand reveal at the end. A majority decides. A tie, or no votes at all, leaves the shade in Asphodel, though Persephone can overrule out loud.
 
 **Round intro**
 
@@ -156,7 +164,7 @@ Six red stickers circulate from 21:00, and anyone wearing one when the Trial sta
 >
 > At eleven, the Court will see who is still bound.
 
-**At the Trial.** Before Round 1, Hades asks the bound shades to step forward. Their forfeit: each one raises a glass and says one line to the hosts, such as "To the Court Below, may we never leave." The room drinks with them.
+**At the Trial.** Before Round 1, Hades asks the bound shades to step forward (in his own words; the TV shows only the toast). Their forfeit: each one raises a glass and says one line to the hosts, such as "To the Court Below, may we never leave." The room drinks with them.
 
 ## Run of show
 
@@ -186,7 +194,7 @@ The Trial sits at 23:00, three hours in. Most guests have arrived by then and th
 ## Open decisions
 
 - [ ] Is 23:00 the right time for the Trial?
-- [ ] Is the portrait photo required or optional? If it's optional, Rounds 1 and 3 show the name and guise instead.
+- [ ] Is the portrait photo required or optional? If it's optional, Rounds 1 and 3 show the name and guise instead. (The app treats it as optional for now; screens show the name's initial.)
 - [ ] What is the prize for Favored of Hades? Does Elysium get a perk too?
 - [ ] Is the Tartarus copy the right roast level for this crowd?
 - [ ] Which six guests start with seeds? Sociable early arrivals work best.
