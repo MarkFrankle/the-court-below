@@ -1,21 +1,40 @@
-/* The TV is read from across a room: big type, sized to the screen. */
+/* The TV is read from across a room: big type, sized to the screen.
+   By height as well as width, so a short window (a laptop casting a tab) shrinks everything rather than overflowing. */
 .tv {
   position: relative;
   height: 100dvh;
   overflow: hidden;
-  font-size: clamp(1.75rem, 2.2vw, 3rem);
+  font-size: clamp(1rem, min(2.2vw, 3.9vh), 3rem);
+  /* Cormorant's default numerals are old-style; scores and timers read better level. */
+  font-variant-numeric: lining-nums;
 }
+
+/* Portraits scale with the TV's type instead of the page's fixed sizes. */
+.tv .portrait-sm { width: 1.5em; }
+.tv .portrait-sm span { font-size: 0.8em; }
+.tv .portrait-md { width: 3.5em; }
+.tv .portrait-md span { font-size: 1.4em; }
+.tv .portrait-lg { width: 5.5em; }
+.tv .portrait-lg span { font-size: 2.2em; }
 
 .tv-stage {
   display: grid;
   /* safe: if a screen is ever too tall, it overflows at the bottom rather than cutting off its title. */
   place-content: safe center;
+  /* Rows never shrink below their content. Portraits crop with overflow: hidden, which otherwise lets a crowded
+     grid collapse their row and draw the portrait over whatever comes next. */
+  grid-auto-rows: max-content;
   justify-items: center;
   gap: 4vh;
   height: 100%;
   padding: 6vh 8vw;
   text-align: center;
   animation: tv-fade 1.2s ease;
+}
+
+/* Screens space their lines with the grid's gap, so headings and paragraphs drop their default margins. */
+.tv-stage > :is(h1, h2, p) {
+  margin: 0;
 }
 
 .tv-title {
@@ -147,7 +166,7 @@
 .tv-seconds {
   margin: 0;
   font-size: 3em;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .tv-heard {
@@ -158,7 +177,7 @@
 .tv-count {
   margin: 0;
   color: var(--muted);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .tv-reveal {
@@ -206,11 +225,6 @@
   margin: 0.2em 0;
 }
 
-.tv-verdict-stage {
-  align-content: start;
-  padding-top: 8vh;
-}
-
 .tv-souls {
   display: flex;
   flex-wrap: wrap;
@@ -230,7 +244,7 @@
 }
 
 .tv-souls .portrait-md {
-  width: 9vw;
+  width: min(9vw, 15vh);
 }
 
 /* Finale */
@@ -256,7 +270,7 @@
 .tv-lb-score {
   font: 600 1.4em var(--font-display);
   color: var(--gold-soft);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .tv-favored {
