@@ -4,10 +4,7 @@ import * as api from '../lib/api'
 import { useGame } from '../lib/useGame'
 import { Reconnecting } from '../ui/Reconnecting'
 import { ArrivalForm } from './ArrivalForm'
-import { ChooseAnswer } from './ChooseAnswer'
-import { Judge } from './Judge'
-import { Petitions } from './Petitions'
-import { PickShade } from './PickShade'
+import { play } from './play'
 import { Verdict } from './Verdict'
 import '../ui/game.css'
 import './guest.css'
@@ -83,17 +80,8 @@ function GuestScreen(props: { userId: string } & ReturnType<typeof useGame>) {
     )
   }
 
-  // Keyed by step, so each item starts fresh.
-  if (me && phase === 'r1_vote') {
-    return <Shell><PickShade key={`r1-${data.game.step}`} data={data} userId={props.userId} onVoted={refresh} /></Shell>
-  }
-  if (me && phase === 'r2_write') return <Shell><Petitions data={data} onSaved={refresh} /></Shell>
-  if (me && !me.hidden && phase === 'r2_vote') {
-    return <Shell><ChooseAnswer key={`r2-${data.game.step}`} data={data} onVoted={refresh} /></Shell>
-  }
-  if (me && !me.hidden && phase === 'r3_vote') {
-    return <Shell><Judge key={`r3-${data.game.step}`} data={data} onVoted={refresh} /></Shell>
-  }
+  const action = play(data, props.userId, refresh)
+  if (action) return <Shell>{action}</Shell>
 
   return (
     <Shell>

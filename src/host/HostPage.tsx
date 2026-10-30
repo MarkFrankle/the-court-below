@@ -8,6 +8,8 @@ import { useGame } from '../lib/useGame'
 import { useLiveCount } from '../lib/useLiveCount'
 import { supabase } from '../lib/supabase'
 import { Portrait } from '../ui/Portrait'
+import { ArrivalForm } from '../guest/ArrivalForm'
+import { play } from '../guest/play'
 import { Reconnecting } from '../ui/Reconnecting'
 import { Speech } from '../ui/Speech'
 import { describe } from './describe'
@@ -16,6 +18,7 @@ import { Moderation } from './Moderation'
 import { script } from './script'
 import { autoVote, seedTestShades } from './rehearsal'
 import '../ui/game.css'
+import '../guest/guest.css'
 import './host.css'
 
 export function HostPage() {
@@ -76,6 +79,7 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
   const { data, error: loadError, refresh, stale } = useGame('host', props.userId)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [joining, setJoining] = useState(false)
   const game = data?.game ?? { phase: 'lobby' as const, step: 0, deadlineAt: null }
   const left = useCountdown(game.deadlineAt)
   const live = useLiveCount(game)
@@ -114,6 +118,9 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
   // The same Favored of Hades the TV shows.
   const winners = favored(totals(data.obols), visible.map((s) => s.id)).map((id) => visible.find((s) => s.id === id)!.name)
   const lines = script(game, winners.join(' and '))
+  // A host can play too: their shade is on their host account.
+  const me = data.shades.find((s) => s.id === props.userId) ?? null
+  const action = play(data, props.userId, refresh)
 
   return (
     <main className="court host">
@@ -144,6 +151,33 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
         )}
       </div>
       {(error ?? loadError) && <p className="error">{error ?? loadError}</p>}
+
+      {action && <section className="host-section host-play">{action}</section>}
+
+      {/* Joining is for the lobby only: a host's shade made later wouldn't be marked late. */}
+      {game.phase === 'lobby' && (
+        <section className="host-section">
+          <h2 className="display">Your shade</h2>
+          {joining ? (
+            <ArrivalForm
+              late={false}
+              shade={me}
+              confession={data.mine?.confession ?? null}
+              onSaved={() => {
+                setJoining(false)
+                refresh()
+              }}
+            />
+          ) : me ? (
+            <p>
+              {me.name}{me.guise && <span className="muted">, {me.guise}</span>}{' '}
+              <button className="link" onClick={() => setJoining(true)}>Edit</button>
+            </p>
+          ) : (
+            <button className="button ghost" onClick={() => setJoining(true)}>Join the Trial</button>
+          )}
+        </section>
+      )}
 
       <Moderation data={data} busy={busy} run={run} />
 
