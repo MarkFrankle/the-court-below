@@ -44,6 +44,7 @@ export const round1 = {
   reveal: {
     most: 'Your reputation precedes you, shade.',
     half: 'Guilty. The scales do not lie.',
+    few: 'Only the sharpest eyes in the Court saw through you.',
     none: 'No one suspected. The Court is impressed, and slightly worried.',
   },
 }

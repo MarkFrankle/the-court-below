@@ -21,13 +21,13 @@ export function scoreRound1(p: { item: number; authorId: string; votes: Vote[]; 
   return { correct: right.length, guessers: guesses.length, awards }
 }
 
-// Which Round 1 reveal line to read.
-export function revealTone(correct: number, guessers: number): 'most' | 'half' | 'none' {
-  if (guessers === 0) return 'none'
+// Which Round 1 reveal line to read. 'none' means nobody at all named the author.
+export function revealTone(correct: number, guessers: number): 'most' | 'half' | 'few' | 'none' {
+  if (correct === 0 || guessers === 0) return 'none'
   const share = correct / guessers
   if (share > 0.6) return 'most'
   if (share >= 0.25) return 'half'
-  return 'none'
+  return 'few'
 }
 
 // The writers' votes are bets on the winner; everyone else's are votes.

@@ -78,7 +78,8 @@ Eight anonymous confessions go up one at a time, and the room guesses who wrote 
 
 - Most guessed right: *Your reputation precedes you, shade.*
 - About half: *Guilty. The scales do not lie.*
-- Almost nobody: *No one suspected. The Court is impressed, and slightly worried.*
+- A few (under a quarter): *Only the sharpest eyes in the Court saw through you.*
+- Nobody: *No one suspected. The Court is impressed, and slightly worried.*
 
 **Round intro**
 

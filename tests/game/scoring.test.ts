@@ -32,7 +32,7 @@ test('round 1: a late shade can guess, though it is not a player', () => {
 })
 
 test.each([
-  [0, 0, 'none'], [1, 5, 'none'], [1, 4, 'half'], [3, 5, 'half'], [4, 5, 'most'],
+  [0, 0, 'none'], [0, 12, 'none'], [1, 12, 'few'], [1, 5, 'few'], [1, 4, 'half'], [3, 5, 'half'], [4, 5, 'most'],
 ] as const)('reveal tone for %i of %i is %s', (correct, guessers, tone) => {
   expect(revealTone(correct, guessers)).toBe(tone)
 })
