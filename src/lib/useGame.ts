@@ -54,7 +54,15 @@ export function useGame(role: Role, userId: string | null) {
     }
     document.addEventListener('visibilitychange', onVisible)
     const interval = window.setInterval(refresh, role === 'host' ? 5_000 : 30_000)
+    // The TV has no identity to lose: if its session goes (say a refresh token is refused), sign in again and carry on.
+    // Guests can't do this, since a new sign-in is a new user without their shade.
+    const auth = supabase.auth.onAuthStateChange((event, session) => {
+      if (role !== 'tv') return
+      if (!session) api.ensureAnonymous().then(refresh, () => {})
+      else if (event === 'SIGNED_IN') refresh()
+    })
     return () => {
+      auth.data.subscription.unsubscribe()
       supabase.removeChannel(channel)
       document.removeEventListener('visibilitychange', onVisible)
       window.clearInterval(interval)
@@ -62,7 +70,8 @@ export function useGame(role: Role, userId: string | null) {
     }
   }, [load, refresh, role])
 
-  return { data, error, refresh }
+  // Stale: there is something on screen, but the latest load failed.
+  return { data, error, refresh, stale: !!data && !!error }
 }
 
 if (import.meta.env.DEV) {

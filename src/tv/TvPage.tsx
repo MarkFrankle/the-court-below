@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { obolLine, opening, seeds } from '../content/copy'
 import * as api from '../lib/api'
 import { useGame } from '../lib/useGame'
+import { Reconnecting } from '../ui/Reconnecting'
 import { Speech } from '../ui/Speech'
 import { Hall } from './Hall'
 import { Finale } from './Finale'
@@ -24,7 +25,7 @@ export function TvPage() {
 }
 
 function Tv() {
-  const { data, error } = useGame('tv', null)
+  const { data, error, stale } = useGame('tv', null)
   if (!data) return <main className="court tv">{error && <p className="error">{error}</p>}</main>
   const { phase, step } = data.game
 
@@ -36,6 +37,7 @@ function Tv() {
       {phase.startsWith('r3_') && <Round3 data={data} />}
       {phase === 'finale' && <Finale data={data} />}
       {phase.startsWith('r2_') && <Round2 data={data} />}
+      <Reconnecting show={stale} />
     </main>
   )
 }

@@ -7,6 +7,7 @@ import { useGame } from '../lib/useGame'
 import { useLiveCount } from '../lib/useLiveCount'
 import { supabase } from '../lib/supabase'
 import { Portrait } from '../ui/Portrait'
+import { Reconnecting } from '../ui/Reconnecting'
 import { describe } from './describe'
 import { advance, enter, retreat } from './engine'
 import { Moderation } from './Moderation'
@@ -69,7 +70,7 @@ function HostSignIn(props: { onSignedIn: (userId: string) => void }) {
 }
 
 function Remote(props: { userId: string; onSignOut: () => void }) {
-  const { data, error: loadError, refresh } = useGame('host', props.userId)
+  const { data, error: loadError, refresh, stale } = useGame('host', props.userId)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const game = data?.game ?? { phase: 'lobby' as const, step: 0, deadlineAt: null }
@@ -187,6 +188,7 @@ function Remote(props: { userId: string; onSignOut: () => void }) {
       </section>
 
       <button className="link host-signout" onClick={props.onSignOut}>Sign out</button>
+      <Reconnecting show={stale} />
     </main>
   )
 }

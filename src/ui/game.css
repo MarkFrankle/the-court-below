@@ -158,3 +158,16 @@
 .realm-elysium .display, .display.realm-elysium { color: #f1dc9c; }
 .realm-asphodel .display, .display.realm-asphodel { color: #c3bfc6; }
 .realm-tartarus .display, .display.realm-tartarus { color: #e08a6a; }
+
+.reconnecting {
+  position: fixed;
+  left: 1rem;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 50;
+  margin: 0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgb(42 20 36 / 0.85);
+  color: var(--muted);
+  font: 500 0.85rem var(--font-body);
+}

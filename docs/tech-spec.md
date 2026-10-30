@@ -123,6 +123,7 @@ Every client keeps one Supabase channel open and renders from one load of the ga
 
 - **Subscriptions.** Everyone subscribes to `game`, `shades`, `r1_items`, `r2_matchups`, `r3_items` and `obols`. Any change triggers a debounced full refetch (`src/lib/useGame.ts`). Only the newest refetch may update the screen, so a slow older one can't roll it back. RLS filters what each client receives.
 - **Recovery.** Refetch on `visibilitychange` to visible, on `SUBSCRIBED`, when Realtime reports database changes flowing (a moment after `SUBSCRIBED`; see `agent_docs/local-supabase.md`), and every 30 s (every 5 s on the remote, which also lists confessions and answers that aren't in the publication).
+- **Stale screens.** When a load fails, the screen keeps what it has and shows "Reconnecting…" in a corner until a load succeeds, so a frozen screen never looks live. The TV also signs itself in again if its session is lost (it has no identity to lose); guests can't, since a new sign-in is a new user.
 - **Timers.** Deadlines are set by the database (`set_phase` uses `now()`), never by a device clock. Each client calls `server_now()` once to get its clock offset and counts down against `deadline_at`.
 - **Votes.** One `upsert` per tap, so changing your mind before the timer ends is allowed. The phone shows its own vote read back from the database.
 - **Counters.** The TV and the remote poll `vote_count()` or `answer_count()` every 2 seconds during timed phases.
@@ -275,6 +276,7 @@ The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerati
 | Guest opens the QR in another browser | New anonymous user, duplicate shade | Host hides the duplicate on the remote, before Next in the lobby. After that a duplicate made in the lobby stays in the Trial: hiding it would break the rounds already built |
 | Guest misses a vote | No vote | Counters and scoring only count votes cast |
 | Cast tab freezes or closes | TV stalls | Recast or reopen `/tv`; it needs no sign-in and renders from `game` |
+| TV's session is lost | TV would freeze on its last screen | It signs in again by itself; "Reconnecting…" shows while loads fail |
 | Laptop dies | No TV | Open `/tv` on any device |
 | Host phone dies | No remote, no engine | Sign in to `/host` on another device; it reruns the current phase's entry work |
 | Offensive confession or answer | Shows on TV | Hide it on the remote: confessions during the lobby, petitions during Round 2 |

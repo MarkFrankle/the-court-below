@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { arrival, screens, TRIAL_STARTS_AT } from '../content/copy'
 import * as api from '../lib/api'
 import { useGame } from '../lib/useGame'
+import { Reconnecting } from '../ui/Reconnecting'
 import { ArrivalForm } from './ArrivalForm'
 import { ChooseAnswer } from './ChooseAnswer'
 import { Judge } from './Judge'
@@ -36,7 +37,17 @@ function Shell(props: { children: ReactNode }) {
 }
 
 function Guest(props: { userId: string }) {
-  const { data, error, refresh } = useGame('guest', props.userId)
+  const game = useGame('guest', props.userId)
+  return (
+    <>
+      <GuestScreen userId={props.userId} {...game} />
+      <Reconnecting show={game.stale} />
+    </>
+  )
+}
+
+function GuestScreen(props: { userId: string } & ReturnType<typeof useGame>) {
+  const { data, error, refresh } = props
   const [editing, setEditing] = useState(false)
 
   if (!data) return <Shell>{error ? <p className="error">{error}</p> : <p className="muted">Opening the gates…</p>}</Shell>
