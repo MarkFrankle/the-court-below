@@ -46,7 +46,7 @@ test('a guest creates a shade through the app api', async () => {
   const path = await api.uploadPortrait(new Blob([JPEG], { type: 'image/jpeg' }))
   expect(path).toMatch(new RegExp(`^${id}\\.jpg\\?v=\\d+$`))
   await api.saveShade({ name: 'Persephone Test', guise: 'Queen of the Underworld', portraitPath: path })
-  await api.saveConfession({ sin: 'I eat the seeds.', talent: 'I can grow anything.', bargain: 'Spring, all year.' })
+  await api.saveConfession({ sin: 'I eat the seeds.', talent: 'I can grow anything.' })
   // A retake overwrites the same file.
   await api.uploadPortrait(new Blob([JPEG], { type: 'image/jpeg' }))
 
@@ -259,56 +259,13 @@ test('round 2 runs end to end', async () => {
     if (m.writerB === cal.id) expect([m.answerB, m.votesB]).toEqual([null, 0])
   }
   await advance()
-  expect((await game()).phase).toBe('r3_intro')
+  // Round 3 is cut: the last reveal leads straight to the finale.
+  expect(await game()).toMatchObject({ phase: 'finale', step: 0 })
 })
 
-test('round 3 judges every player and reveals realm by realm', async () => {
-  await advance() // r3_intro 1: the realms
-  const d0 = await api.fetchAll({ userId: null, host: true })
-  const judged = d0.r3.map((i) => i.shadeId)
-
-  for (let i = 0; i < d0.r3.length; i++) {
-    await advance()
-    const d = await api.fetchAll({ userId: null, host: true })
-    expect(d.game).toMatchObject({ phase: 'r3_vote', step: i })
-    // The bargain goes public only for the shade that's up.
-    expect(d.r3[i].opened).toBe(true)
-    // Medusa's hidden bargain never goes public.
-    const isMedusa = d.shades.find((s) => s.id === d.r3[i].shadeId)?.name === 'Medusa'
-    if (isMedusa) expect(d.r3[i].bargain).toBeNull()
-    else expect(d.r3[i].bargain).toBeTruthy()
-    if (i + 1 < d.r3.length) expect(d.r3[i + 1].bargain).toBeNull()
-    // The real guests send everyone to Tartarus.
-    for (const g of guests.slice(1)) ok(await g.client.from('votes').upsert({ voter_id: g.id, round: 3, item: i, choice: 'tartarus' }, { onConflict: 'voter_id,round,item' }))
-    await autoVote(d)
-  }
-
-  // Step 0 reveals Tartarus only: nobody is in Asphodel or Elysium yet, as a guest sees it.
-  await advance()
-  expect(await game()).toMatchObject({ phase: 'r3_reveal', step: 0 })
-  const seen = ok(await guests[1].client.from('shades').select('id, realm')) as { id: string; realm: string | null }[]
-  expect(seen.some((s) => s.realm === 'asphodel' || s.realm === 'elysium')).toBe(false)
-
-  await advance()
-  await advance()
-  const final = await api.fetchAll({ userId: null, host: true })
-  expect(final.game).toMatchObject({ phase: 'r3_reveal', step: 2 })
-  for (const id of judged) expect(final.shades.find((s) => s.id === id)?.realm).toBeTruthy()
-
-  // Back through the reveal takes Elysium down again, and back to the vote clears every realm.
-  await retreat()
-  const realmsNow = async () => (await api.fetchAll({ userId: null, host: true })).shades.map((s) => s.realm)
-  expect(await realmsNow()).not.toContain('elysium')
-  await retreat()
-  await retreat()
-  expect(await game()).toMatchObject({ phase: 'r3_vote', step: judged.length - 1 })
-  expect((await realmsNow()).every((r) => r === null)).toBe(true)
-  for (let k = 0; k < 3; k++) await advance()
-  expect(await game()).toMatchObject({ phase: 'r3_reveal', step: 2 })
-  for (const id of judged) expect((await api.fetchAll({ userId: null, host: true })).shades.find((s) => s.id === id)?.realm).toBeTruthy()
-
-  await advance()
-  expect(await game()).toMatchObject({ phase: 'finale', step: 0 })
+test('the finale judges nobody and ends in the after-party', async () => {
+  const d = await api.fetchAll({ userId: null, host: true })
+  expect(d.shades.every((s) => s.realm === null)).toBe(true)
   await advance()
   await advance()
   expect((await game()).phase).toBe('after')

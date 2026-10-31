@@ -1,4 +1,4 @@
-import { arrival, realms, round3 } from '../content/copy'
+import { realms, round3 } from '../content/copy'
 import type { GameData } from '../lib/api'
 import { REALMS } from '../lib/game'
 import { Portrait } from '../ui/Portrait'
@@ -39,12 +39,6 @@ export function Round3(props: { data: GameData }) {
         <Portrait shade={shade} size="lg" />
         <h2 className="display tv-name">{shade.name}</h2>
         {shade.guise && <p className="hall-guise">{shade.guise}</p>}
-        {item.bargain && (
-          <div className="tv-bargain">
-            <p className="muted">{arrival.confessions.bargain.question}</p>
-            <p className="speech">“{item.bargain}”</p>
-          </div>
-        )}
         <Clock data={props.data} />
       </section>
     )

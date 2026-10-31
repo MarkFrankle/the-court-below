@@ -12,7 +12,7 @@ export function script(g: Pick<GameState, 'phase' | 'step'>, winners: string): L
     case 'r3_intro': return step === 0 ? [round3.intro] : []
     case 'r3_reveal': return REALMS[step] ? [realmReveal[REALMS[step]]] : []
     case 'finale':
-      return step === 1 ? [closing.persephone, { ...closing.hades, text: closing.hades.text.replace('[Name]', winners || '…') }] : []
+      return step === 1 ? [{ ...closing.hades, text: closing.hades.text.replace('[Name]', winners || '…') }] : []
     default: return []
   }
 }

@@ -1,9 +1,9 @@
 # The Trial of the Shades: game plan
 
-Guests create a "shade" on their phone when they arrive. At 23:00 everyone plays a 30-minute game on the TV, The Trial of the Shades, built from what they submitted. The rest of the night stays phone-free.
+Guests create a "shade" on their phone when they arrive. At 23:00 everyone plays a 20-minute game on the TV, The Trial of the Shades, built from what they submitted. The rest of the night stays phone-free.
 
 - **No mythology knowledge needed.** The game explains any lore in one line. The jokes come from the guests, not the myths.
-- **Phones come out twice.** About 2 minutes on arrival, about 30 minutes at the Trial.
+- **Phones come out twice.** About 2 minutes on arrival, about 20 minutes at the Trial.
 - **Sized for about 15 guests.** Anyone who arrives after 23:00 can still join mid-Trial with a quick shade (see [Late arrivals](#late-arrivals)).
 - **Hades and Persephone host.** The remote on your phone gives you lines to read, so you can play along rather than run a show. The TV shows the game, not the script.
 - **One background game with no phones.** Persephone's Seeds runs from 21:00 until the Trial.
@@ -23,10 +23,9 @@ A QR code by the door opens a short form that takes about 2 minutes. The same QR
 1. **Mortal name.** "What did the living call you?"
 2. **Guise.** "Who or what have you come as?" Hint under the field: *Anything counts: a god, a ghost, or simply dark and elegant.*
 3. **Portrait.** "The Court keeps a likeness of every soul." A photo of their costume, with retakes allowed.
-4. **Three confessions.** These feed the game, and they stay anonymous until the Trial reveals them.
+4. **Two confessions.** These feed the game, and they stay anonymous until the Trial reveals them.
    - "What sin sent you to the Underworld?" Example: *I reply-all to company-wide emails.*
    - "What is your most suspicious talent?" Example: *I can name every IKEA product in my flat.*
-   - "What would you bargain with Hades for?" Example: *One more hour of sleep, every night, forever.*
 
 A line under the confessions keeps it light: *Keep it something you'd say at a party. The Court reads these aloud.*
 
@@ -42,17 +41,16 @@ Guests who scan the QR code after the Trial has started get a shorter form: mort
 
 > The Court is already in session. Give us your name and your likeness, and take your seat among the shades.
 
-A late shade votes as soon as they join and can earn obols for correct guesses in Round 1. They have no confessions, so they aren't guessed in Round 1, don't write in Round 2 and aren't judged in Round 3. Their portrait joins the Hall of Shades afterwards.
+A late shade votes as soon as they join and can earn obols for correct guesses in Round 1. They have no confessions, so they aren't guessed in Round 1 and don't write in Round 2. Their portrait joins the Hall of Shades afterwards.
 
 ## The Trial: how the shared game works
 
-The Trial is a 30-minute, three-round game show on the TV, presided over by Hades and Persephone. Phones become controllers: guests reopen the same link and see only buttons and a text box, never the game itself.
+The Trial is a 20-minute, two-round game show on the TV, presided over by Hades and Persephone. Phones become controllers: guests reopen the same link and see only buttons and a text box, never the game itself.
 
 | Round | What happens | Time | Points |
 | --- | --- | --- | --- |
 | 1. Whose Sin Is It? | Guess who wrote each anonymous confession | ~8 min | 1 obol per correct guess. The author gets 1 obol per person fooled |
 | 2. Petitions to Hades | Write funny answers to prompts; the room votes | ~12 min | 1 obol per vote; 2 bonus for winning every vote |
-| 3. The Judgment | The room sends each shade to Elysium, Asphodel or Tartarus | ~6 min | None; it's the finale verdict |
 
 The shade with the most obols is named **Favored of Hades** at the end. Scores stay hidden until then: no running totals on phones or the TV, and the full leaderboard appears only at the finale.
 
@@ -62,7 +60,7 @@ The shade with the most obols is named **Favored of Hades** at the end. Scores s
 
 > **Hades:** Silence, shades. The Court is in session.
 >
-> **Persephone:** Tonight we decide where each of you spends eternity. Your phones are your voice in this court. Use them wisely.
+> **Persephone:** Tonight the Court will learn your sins, and decide whom Hades favors. Your phones are your voice in this court. Use them wisely.
 
 The TV then explains obols in one line: *Obols are the coins the dead pay Charon, the ferryman. Earn the most and Hades will favor you.*
 
@@ -127,32 +125,18 @@ This is a Quiplash-style writing round. Each prompt goes to two guests, and ever
 
 > **Hades:** Pander shamelessly. Flattery works on this Court.
 
-## Round 3: The Judgment
+## Round 3 was cut
 
-Each shade's portrait, guise and bargain appear for 12 seconds, and the room votes on where they spend eternity. Votes stay hidden until a grand reveal at the end. A majority decides. A tie, or no votes at all, leaves the shade in Asphodel, though Persephone can overrule out loud.
+The Judgment (the room sending each shade to Elysium, Asphodel or Tartarus) was cut after the Friday rehearsal.
+Voting on where friends spend eternity felt too personal for a throwaway prompt, and the three realms needed lore nobody had.
+The Trial goes from Round 2 straight to the finale. The hosts may run a costume show out loud, outside the app.
 
-**Round intro**
+## Finale
 
-> **Hades:** In the old world, every soul stood before three judges. Tonight, you are the judges. Choose wisely, or at least choose quickly.
+The TV shows every shade's obols, then the Favored of Hades.
 
-**The three realms** (shown on the TV before voting; the same lines label the buttons on phones)
+**Closing line** (the TV shows the Favored of Hades: portrait and name)
 
-- **Elysium.** The Elysian Fields: endless golden afternoons, soft music and the good wine. Reserved for heroes, the virtuous, and anyone who truly committed to their costume.
-- **Asphodel.** The Asphodel Meadows: a grey field of pale flowers where most souls drift forever. Not a punishment. Not a reward. For those who lived a perfectly pleasant, entirely forgettable life.
-- **Tartarus.** The pit beneath the Underworld, where the gods send their worst. Sisyphus is down there pushing his boulder uphill for eternity. Reserved for villains, tricksters, and anyone caught double-dipping at the snack table.
-
-**The reveal** (realm by realm: the realm's name, portraits filling the screen)
-
-> **Hades:** First, those condemned to Tartarus.
->
-> **Persephone:** Then those who will drift in Asphodel.
->
-> **Hades:** And finally, the blessed of Elysium.
-
-**Closing lines** (the TV shows the Favored of Hades: portrait and name)
-
-> **Persephone:** The judgment is spoken. Elysium, the good wine is yours. Asphodel, drift on. Tartarus, the bar is still open, but we are watching you.
->
 > **Hades:** And the shade most favored by Hades tonight is... [Name]. The Court is adjourned. Revel on.
 
 ## Persephone's Seeds (background game, no phones)
@@ -184,8 +168,8 @@ The Trial sits at 23:00, three hours in. Most guests have arrived by then and th
 | 23:00 | Music down; the Trial opens; bound shades step forward | Opening lines |
 | 23:05 | Round 1: Whose Sin Is It? | Game |
 | 23:13 | Round 2: Petitions to Hades | Game |
-| 23:25 | Round 3: The Judgment, reveal, Favored of Hades | Game |
-| 23:35 | Phones away; music back up; party continues | Hall of Shades, each portrait labeled with its realm |
+| 23:25 | Finale: obols, Favored of Hades | Game |
+| 23:30 | Phones away; music back up; party continues | Hall of Shades |
 
 ## TV, music and photos
 
@@ -193,13 +177,12 @@ The Trial sits at 23:00, three hours in. Most guests have arrived by then and th
 - **Music.** The Spotify playlist plays on the speaker all night. Turn it down for the Trial and back up afterwards.
 - **Joining.** One link for both arrival and the Trial, on a QR code printed on 2–3 cards and shown on the TV.
 - **Wi-Fi.** Print the guest Wi-Fi name and password on the QR cards, since phones need internet throughout.
-- **Fallback.** If casting fails, turn the laptop screen toward the room. Rounds 1 and 3 still work that way.
+- **Fallback.** If casting fails, turn the laptop screen toward the room. Round 1 still works that way.
 - **Photos.** The photo booth and the shared Google Photos album stay separate from the game. Guests add booth photos through the album's own QR code. After the party, the game's portraits can be downloaded and added to the same album.
 
 ## Open decisions
 
 - [ ] Is 23:00 the right time for the Trial?
-- [ ] Is the portrait photo required or optional? If it's optional, Rounds 1 and 3 show the name and guise instead. (The app treats it as optional for now; screens show the name's initial.)
-- [ ] What is the prize for Favored of Hades? Does Elysium get a perk too?
-- [ ] Is the Tartarus copy the right roast level for this crowd?
+- [ ] Is the portrait photo required or optional? If it's optional, Round 1 shows the name and guise instead. (The app treats it as optional for now; screens show the name's initial.)
+- [ ] What is the prize for Favored of Hades?
 - [ ] Which six guests start with seeds? Sociable early arrivals work best.

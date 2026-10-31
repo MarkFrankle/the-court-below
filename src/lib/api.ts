@@ -90,7 +90,7 @@ export async function saveShade(s: { name: string; guise: string | null; portrai
   check(await supabase.from('shades').upsert({ id: await uid(), name: s.name, guise: s.guise, portrait_path: s.portraitPath }))
 }
 
-export async function saveConfession(c: Omit<Confession, 'shadeId'>): Promise<void> {
+export async function saveConfession(c: Pick<Confession, 'sin' | 'talent'>): Promise<void> {
   check(await supabase.from('confessions').upsert({ shade_id: await uid(), ...c }))
 }
 

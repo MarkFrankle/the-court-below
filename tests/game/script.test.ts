@@ -12,8 +12,6 @@ test('the opening screen has both opening lines, the rest of the opening has non
 
 test('each round intro has its line', () => {
   expect(speakers('r1_intro')).toEqual(['Persephone'])
-  expect(speakers('r3_intro', 0)).toEqual(['Hades'])
-  expect(at('r3_intro', 1)).toEqual([])
 })
 
 test('round 2 intro has Hades read the three rules, then the last line', () => {
@@ -22,17 +20,11 @@ test('round 2 intro has Hades read the three rules, then the last line', () => {
   expect(lines[3].text).toMatch(/^Pander shamelessly/)
 })
 
-test('each realm reveal has its line, in reveal order', () => {
-  expect(at('r3_reveal', 0)[0].text).toMatch(/Tartarus/)
-  expect(at('r3_reveal', 1)[0].text).toMatch(/Asphodel/)
-  expect(at('r3_reveal', 2)[0].text).toMatch(/Elysium/)
-})
-
 test('the finale names the favored shade in Hades’ line', () => {
   expect(at('finale', 0)).toEqual([])
   const lines = at('finale', 1, 'Mark and Sarah')
-  expect(lines.map((l) => l.speaker)).toEqual(['Persephone', 'Hades'])
-  expect(lines[1].text).toContain('is... Mark and Sarah.')
+  expect(lines.map((l) => l.speaker)).toEqual(['Hades'])
+  expect(lines[0].text).toContain('is... Mark and Sarah.')
 })
 
 test('voting, writing and reveals have nothing to read', () => {

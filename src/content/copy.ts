@@ -15,7 +15,6 @@ export const arrival = {
   confessions: {
     sin: { question: 'What sin sent you to the Underworld?', example: 'I reply-all to company-wide emails.' },
     talent: { question: 'What is your most suspicious talent?', example: 'I can name every IKEA product in my flat.' },
-    bargain: { question: 'What would you bargain with Hades for?', example: 'One more hour of sleep, every night, forever.' },
     note: "Keep it something you'd say at a party. The Court reads these aloud.",
   },
   closing: 'Your shade is recorded. Return to the living for now. The Court convenes at eleven.',
@@ -24,7 +23,7 @@ export const arrival = {
 
 export const opening: Line[] = [
   { speaker: 'Hades', text: 'Silence, shades. The Court is in session.' },
-  { speaker: 'Persephone', text: 'Tonight we decide where each of you spends eternity. Your phones are your voice in this court. Use them wisely.' },
+  { speaker: 'Persephone', text: 'Tonight the Court will learn your sins, and decide whom Hades favors. Your phones are your voice in this court. Use them wisely.' },
 ]
 
 export const obolLine = 'Obols are the coins the dead pay Charon, the ferryman. Earn the most and Hades will favor you.'
@@ -92,7 +91,6 @@ export const realmReveal: Record<Realm, Line> = {
 }
 
 export const closing = {
-  persephone: { speaker: 'Persephone', text: 'The judgment is spoken. Elysium, the good wine is yours. Asphodel, drift on. Tartarus, the bar is still open, but we are watching you.' } as Line,
   // [Name] is the Favored of Hades.
   hades: { speaker: 'Hades', text: 'And the shade most favored by Hades tonight is... [Name]. The Court is adjourned. Revel on.' } as Line,
   favored: 'Favored of Hades',
