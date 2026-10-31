@@ -1,6 +1,6 @@
 # Trial of the Shades: technical spec
 
-A static React app on Netlify, with Supabase for auth, data, realtime and photo storage, runs the setup checklist, the arrival form, the Hall of Shades and the three-round Trial for about 15 guests on Saturday 31 October. Game content and copy come from the [game plan](game-plan.md); the setup checklist content comes from the [setup plan](setup-plan.md).
+A static React app on Netlify, with Supabase for auth, data, realtime and photo storage, runs the setup checklist, the arrival form, the Hall of Shades and the two-round Trial for about 15 guests on Saturday 31 October. Game content and copy come from the [game plan](game-plan.md); the setup checklist content comes from the [setup plan](setup-plan.md).
 The build followed [the implementation plan](superpowers/plans/2026-10-30-trial-of-the-shades.md), whose "Changes from the spec" section lists where it departed from the first version of this spec.
 
 **Stack**
@@ -9,7 +9,7 @@ The build followed [the implementation plan](superpowers/plans/2026-10-30-trial-
 - Supabase: anonymous sign-in for guests and the TV, email sign-in for the hosts, Postgres with row-level security (RLS), Realtime `postgres_changes`, Storage for portraits.
 - Netlify: static hosting from this GitHub repo, SPA fallback, two environment variables.
 
-**In scope:** the setup checklist page, arrival form, Hall of Shades gallery, Rounds 1–3, obol scoring, host remote with moderation and rehearsal tools.
+**In scope:** the setup checklist page, arrival form, Hall of Shades gallery, Rounds 1 and 2, obol scoring, host remote with moderation and rehearsal tools.
 
 **Out of scope:** Persephone's Seeds (paper only), the photo booth and Google album, a portrait export, a printable QR card, accounts beyond the hosts, any reuse after the party.
 
@@ -52,16 +52,15 @@ The display and the controls are separate routes, because casting a Chrome tab m
 
 | Phase | Phone shows |
 | --- | --- |
-| `lobby` | Form (name, guise, portrait, three confessions), then "Your shade is recorded", a countdown to 23:00 and "Edit my shade". An edit still open when the Court opens is dropped |
+| `lobby` | Form (name, guise, portrait, two confessions), then "Your shade is recorded", a countdown to 23:00 and "Edit my shade". An edit still open when the Court opens is dropped |
 | Any phase before `finale`, no shade yet | The same form with only name and portrait, under the late welcome line |
 | `r1_vote` | Grid of players, minus yourself, under the confession. The author sees the same grid titled "Frame a shade" |
 | `r2_write` | Your two prompts, one text box each, 80 characters max, saved on blur or Save, and once more at time-up. If that last save fails, the boxes stay so the guest can retry until Next |
 | `r2_vote` | Answers A and B as two large buttons. The two authors see the same buttons with a line saying their tap is a bet |
-| `r3_vote` | The shade's name, then Elysium, Asphodel, Tartarus, each with its description |
-| `finale`, `after` | Your portrait, realm and obol total. No score is shown on any phone before this |
+| `finale`, `after` | Your portrait and obol total. No score is shown on any phone before this |
 | Anything else | "Look to the Court" (the TV). A vote screen whose time is up shows "The Court has heard enough" |
 
-**TV screens:** Hall of Shades in `lobby` and `after` (the title over `public/halloween-2026.jpeg`, every shade's portrait and name in a row along the bottom in arrival order, a QR code of the site in a corner, realm labels in `after`), the opening (the title, the obol line, the Seeds toast), each round's intro, each item with a countdown and a "9 of 15 have judged" counter, reveals, the realm-by-realm reveal (each realm's name and its shades), the obol leaderboard and the Favored of Hades with their names. Hades' and Persephone's lines are not on the TV: they're on the remote.
+**TV screens:** Hall of Shades in `lobby` and `after` (the title over `public/halloween-2026.jpeg`, every shade's portrait and name in a row along the bottom in arrival order, a QR code of the site in a corner), the opening (the title, the obol line, the Seeds toast), each round's intro, each item with a countdown and a "9 of 15 have judged" counter, reveals, the obol leaderboard and the Favored of Hades with their names. Hades' and Persephone's lines are not on the TV: they're on the remote.
 
 **Host remote:** the phase in words, the countdown and the live counter, the lines Hades and Persephone read aloud for the screen the TV is showing (`src/host/script.ts`; the closing line with the Favored of Hades' name filled in), Next (labelled with where it goes, and during Round 2 writing with how many petitions are still missing), Back (see below), +10 seconds, the host's own play (a host who joined as a shade votes and writes here, with the same controls as a guest's phone, from `src/guest/play.tsx`), "Your shade" in the lobby (join or edit; only in the lobby, since a host's shade isn't marked late), the shade list with Hide (for duplicates; shades already in the Trial can't be hidden), moderation lists (confessions in the lobby, petitions in Round 2), and a Rehearsal section: Seed 12 test shades, Auto-vote for test shades ("Write test petitions" during Round 2 writing), and Reset game (with a confirmation).
 
@@ -69,7 +68,7 @@ The display and the controls are separate routes, because casting a Chrome tab m
 
 One row, `game`, holds `phase`, `step` and `deadline_at`. Only the host remote changes it, through `set_phase()`. Every screen renders from it.
 The remote is the engine: Next calls `set_phase()` first, which closes any open vote, then does the new phase's entry work from fresh data. Entry work is idempotent, and the remote reruns it whenever it loads, so a reload or a dead phone mid-reveal is harmless.
-Back (`prevStep()`, the exact inverse of Next) undoes what the screen it leaves had written: leaving a reveal for its vote deletes that item's obols and hides the result, so the vote reopens with a fresh clock and Next tallies again; leaving the first Round 2 vote takes those answers off the TV; leaving a Judgment reveal clears the realms it showed; leaving the first opening screen for the lobby takes the rounds down, so Next builds them again from the shades there then. Back is disabled in the lobby.
+Back (`prevStep()`, the exact inverse of Next) undoes what the screen it leaves had written: leaving a reveal for its vote deletes that item's obols and hides the result, so the vote reopens with a fresh clock and Next tallies again; leaving the first Round 2 vote takes those answers off the TV; leaving the first opening screen for the lobby takes the rounds down, so Next builds them again from the shades there then. Back is disabled in the lobby.
 Two remotes are safe too. Next passes `set_phase()` the phase and step it saw, and the database refuses the move if the game has already left them, so two presses at once move one step. The rounds are written by `build_rounds()` in one transaction, which does nothing if they already exist.
 
 | Phase | `step` means | Timer | Entry work on the remote |
@@ -83,11 +82,12 @@ Two remotes are safe too. Next passes `set_phase()` the phase and step it saw, a
 | `r2_write` | — | 90 s | — |
 | `r2_vote` | Matchup 0–n | 20 s | Copies both answers (null if missing or hidden) into that matchup's public row |
 | `r2_reveal` | Same matchup | — | Tallies, writes obols, then publishes the writers and the vote split |
-| `r3_intro` | 0 intro line, 1 the three realms | — | — |
-| `r3_vote` | Shade 0–n | 12 s | Copies that shade's bargain (unless hidden) into its public `r3_items` row |
-| `r3_reveal` | 0, 1, 2 = Tartarus, Asphodel, Elysium | — | Works out every shade's realm, but writes `shades.realm` only for the realms revealed so far, so phones can't see results early |
-| `finale` | 0 leaderboard, 1 closing lines and Favored of Hades | — | — |
-| `after` | — | — | — (Hall of Shades with realm labels) |
+| `finale` | 0 leaderboard, 1 closing line and Favored of Hades | — | — |
+| `after` | — | — | — (Hall of Shades) |
+
+Round 3 (The Judgment) was cut after the Friday rehearsal. The [game plan](game-plan.md#round-3-was-cut) says why.
+Its phases `r3_intro`, `r3_vote` and `r3_reveal` are still in the schema and the code, but Next never enters them: it goes from the last Round 2 reveal to `finale`.
+If the game is ever in one, Next leaves for `finale` and Back for the end of Round 2.
 
 `src/lib/phases.ts` holds this order. A round with nothing in it is skipped with its intro (Round 2 needs 3 players). A vote phase never auto-advances; when the timer ends, screens show "The Court has heard enough" until the host presses Next.
 
@@ -146,7 +146,7 @@ All round building and scoring lives in pure functions in `src/lib/` (`rounds.ts
 
 - **Round 1.** Up to 8 confessions, at most one per shade, each a sin or a talent at random (skipping empty and hidden ones). Shades with portraits first, shuffled. The text goes to `r1_items`, the author to the private `r1_authors`.
 - **Round 2.** With n players (n ≥ 3), shuffle them and the prompts. Matchup i goes to players i and (i + 1) mod n, so everyone writes exactly two, against two different people. For a `[Name]` prompt, the subject is a shade who isn't one of its two writers, spreading names around. Writes `r2_assignments` (private) and `r2_matchups` (prompt and note only).
-- **Round 3.** Every player, shuffled, written to `r3_items`.
+- **Round 3.** Every player, shuffled, written to `r3_items`. Never played, but `build_rounds()` and the remote both treat a non-empty `r3_items` as "the rounds are built", so it stays.
 - **Prompt pool.** The 15 prompts from the game plan plus 5 spares, so up to 20 players work. All copy lives in `src/content/`, verbatim from the game plan.
 
 **Scoring** (written to `obols` on each reveal; the unique key makes rewrites safe)
@@ -159,12 +159,10 @@ All round building and scoring lives in pure functions in `src/lib/` (`rounds.ts
 | 2 | Each writer, per vote received | +1 |
 | 2 | A writer who got every vote (at least 3 votes cast, both answers present) | +2 bonus |
 | 2 | Each writer who bet on the winning answer | +1 |
-| 3 | — | No obols |
 
 - **Round 1 voting.** The author's vote is stored like any other but read as their frame pick.
-- **Invalid votes.** Tallies ignore votes from anyone who isn't a voter, and any choice that isn't another player's id (Round 1), `a`/`b` for an answer that exists (Round 2), or a realm (Round 3).
+- **Invalid votes.** Tallies ignore votes from anyone who isn't a voter, and any choice that isn't another player's id (Round 1), or `a`/`b` for an answer that exists (Round 2).
 - **Round 2 edge cases.** A missing or hidden answer shows as "The Court received no petition", and the other writer wins by default without the bonus. The TV highlights the same winner (`petitionWinner()`). A tied vote gives no bet points.
-- **Round 3.** Majority realm wins. A tie, or no votes, sends the shade to Asphodel. Persephone can overrule out loud.
 - **Favored of Hades.** Highest obol total. A tie is announced as joint favorites.
 - **Hidden scores.** `obols` is readable for simplicity, but no phone or TV screen shows totals before `finale`.
 
@@ -287,7 +285,7 @@ The TV's Hall of Shades shows a QR code of the site, so nothing needs regenerati
 
 - **Late guests after 23:00:** the arrival form with only name and portrait; they vote straight away and earn obols for Round 1 guesses (see Game logic).
 - **Obol totals:** hidden until the finale.
-- **Round 3 ties:** Asphodel.
+- **Round 3:** cut after the Friday rehearsal. The arrival form no longer asks for a bargain. The `bargain` column stays, unused.
 - **The engine:** on the host remote, not the TV, so the TV is a plain display that can't stall the game.
 
 The Netlify site is `the-court-below` (the-court-below.netlify.app), on Mark's Netlify account. The Friday rehearsal has no fixed time: it happens in the evening while friends help decorate.

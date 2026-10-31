@@ -7,7 +7,7 @@ Live at <https://the-court-below.netlify.app>.
 
 The docs are the source of truth. Read the relevant one before changing anything:
 
-- `docs/game-plan.md`: The Trial of the Shades, arrival form, three rounds, every on-screen line.
+- `docs/game-plan.md`: The Trial of the Shades, arrival form, two rounds (Round 3 was cut), every on-screen line.
 - `docs/tech-spec.md`: architecture, schema and RLS, game phases, scoring, `/setup` page, deploy, test checklist.
 - `docs/setup-plan.md`: room checklists, shopping list, Saturday countdown. Seed content for `/setup`.
 - `agent_docs/local-supabase.md`: a local Supabase in Docker, the end-to-end game test, and a Realtime gotcha.
@@ -43,7 +43,7 @@ Mark may take over building the app or the game from the spec, so keep the docs 
 
 - Setup code: `pain-and-panic` (helpers are "Pain & Panic"). SQL order: `hosts.sql`, `setup.sql`, `seed_setup.sql`, then the game's `schema.sql`.
 - After seeding, the live setup list is the source of truth; Claude edits it by writing SQL scripts that target tasks by `key`, which Sarah pastes.
-- Late guests after 23:00 get a quick form (name and portrait only); they vote from the next round and aren't guessed, writers or judged. Spec: `shades.late`.
+- Late guests after 23:00 get a quick form (name and portrait only); they vote from the next round and aren't guessed or writers. Spec: `shades.late`.
 - Obol totals stay hidden until the finale.
 - The Netlify site is `the-court-below`, on Mark's Netlify account, building from `MarkFrankle/the-court-below`. Sarah's old site `thecourtbelow` ran out of free-tier credits and no longer builds.
 - No migrations: SQL lives in `supabase/*.sql` as the spec lays out, and gets pasted into the Supabase SQL editor by hand. Never create `supabase/migrations/`; the Supabase GitHub integration would apply it to production on push.

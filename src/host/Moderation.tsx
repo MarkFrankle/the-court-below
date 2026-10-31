@@ -2,7 +2,7 @@ import type { GameData } from '../lib/api'
 import { answerRef, confessionRef } from '../lib/game'
 import { supabase } from '../lib/supabase'
 
-const FIELDS = ['sin', 'talent', 'bargain'] as const
+const FIELDS = ['sin', 'talent'] as const
 
 function check(res: { error: { message: string } | null }) {
   if (res.error) throw new Error(res.error.message)

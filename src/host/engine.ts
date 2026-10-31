@@ -27,7 +27,7 @@ function serial(fn: () => Promise<void>): Promise<void> {
 
 export const advance = () => serial(async () => {
   const d = await fresh()
-  const next = nextStep(d.game, { r1: d.r1.length, r2: d.r2.length, r3: d.r3.length })
+  const next = nextStep(d.game, { r1: d.r1.length, r2: d.r2.length })
   if (!next) return
   // False if another remote moved the game first: this press is then a no-op.
   if (!(await api.setPhase(next.phase, next.step, next.seconds, d.game))) return
@@ -38,7 +38,7 @@ export const advance = () => serial(async () => {
 // on the TV, revealed realms), so moving forward again redoes it from the votes as they then stand.
 export const retreat = () => serial(async () => {
   const d = await fresh()
-  const prev = prevStep(d.game, { r1: d.r1.length, r2: d.r2.length, r3: d.r3.length })
+  const prev = prevStep(d.game, { r1: d.r1.length, r2: d.r2.length })
   if (!prev) return
   if (!(await api.setPhase(prev.phase, prev.step, prev.seconds, d.game))) return
   await undo(d.game)

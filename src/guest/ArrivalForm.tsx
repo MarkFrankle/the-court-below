@@ -5,15 +5,15 @@ import type { Confession, Shade } from '../lib/game'
 import { toPortrait } from '../lib/image'
 import { Portrait } from '../ui/Portrait'
 
-type Field = 'sin' | 'talent' | 'bargain'
-const FIELDS: Field[] = ['sin', 'talent', 'bargain']
+type Field = 'sin' | 'talent'
+const FIELDS: Field[] = ['sin', 'talent']
 
 // The arrival form. A late shade (after the lobby) gives only a name and a portrait.
 export function ArrivalForm(props: { late: boolean; shade: Shade | null; confession: Confession | null; onSaved: () => void }) {
   const [name, setName] = useState(props.shade?.name ?? '')
   const [guise, setGuise] = useState(props.shade?.guise ?? '')
   const [answers, setAnswers] = useState<Record<Field, string>>({
-    sin: props.confession?.sin ?? '', talent: props.confession?.talent ?? '', bargain: props.confession?.bargain ?? '',
+    sin: props.confession?.sin ?? '', talent: props.confession?.talent ?? '',
   })
   const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null)
   const [reading, setReading] = useState(false)
@@ -46,7 +46,7 @@ export function ArrivalForm(props: { late: boolean; shade: Shade | null; confess
       const portraitPath = photo ? await api.uploadPortrait(photo.blob) : (props.shade?.portraitPath ?? null)
       await api.saveShade({ name: name.trim(), guise: props.late ? null : guise.trim() || null, portraitPath })
       if (!props.late) {
-        await api.saveConfession({ sin: answers.sin.trim(), talent: answers.talent.trim(), bargain: answers.bargain.trim() })
+        await api.saveConfession({ sin: answers.sin.trim(), talent: answers.talent.trim() })
       }
       props.onSaved()
     } catch {
